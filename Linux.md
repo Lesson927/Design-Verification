@@ -1,13 +1,13 @@
 # Linux 常用命令
 
 ## ls
-```
+```bash
 ls
 ls -a 所有
 ls -h 
 ```
 ## cd
-```
+```bash
 cd 切换目录
 cd ~ 切换到主目录
 cd . 保持当前目录
@@ -15,7 +15,7 @@ cd .. 切换到上级目录
 cd - 切换到最近使用目录
 ```
 ## 文件操作相关
-```
+```bash
 touch 创建文件
 vim/gvim 创建并编辑文件
 sublime 创建并编辑文件
@@ -35,23 +35,23 @@ cp 拷贝
     -r 若源文件是目录文件，递归复制所有
 ```
 ## 查找
-```
+```bash
 find 查找文件
     find ../name/README.md
 grep 查找关键词
     grep -ri error
 ```
 ## 压缩
-```
+```bash
 tar tar -cd ex.tar yf
 ```
 ## 进程
-```
+```bash
 kill
 ps
 ```
 ## 其他
-```
+```bash
 chmod   权限
 ln  链接
 |   管道符，|左边命令的输出作为命令右边的输入

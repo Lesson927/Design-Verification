@@ -81,4 +81,10 @@ verdi:
     @echo "Running verdi..."
     . verdi_compile.do
     verdi -lib work -ssf tb_top.fsdb -top tb_top &
+#clean
+clean:
+    @echo "Cleanning simulation outputs"
+    rm -rf ...
+
+.PHONY: all compile elaborate simulate clean
 ```

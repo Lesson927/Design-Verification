@@ -31,11 +31,11 @@ f：函数覆盖率（Function Coverage）
 x：FSM 覆盖率（eXtended FSM Coverage）  
 ## 优化
 **elaborate.do**
-```bash
+```do
 vopt -64 +acc -l elaborate.log -L work -L unisims_ver -L unimacro_ver -L secureip -L xpm -work work work.tb_top work .glbl -o tb_top_opt
 ```
 ## 仿真
-```bash
+```do
 vsim -t 1ps -lib work tb_top_opt -coverage -sv_lib ../../.. -pli /tools/synopsys/verdi/U-2023.03/share/PLI/MODELSIM/linux64/novas_fli.so
 coverage save -onexit test.ucdb
 
@@ -49,7 +49,7 @@ run -all
 ```
 ## 波形
 **wave.do**
-```bash
+```do
 add wave *
 add wave -poisition insertpoint sim:/tb_top/_if/s_axis_a_tvalid
 ```

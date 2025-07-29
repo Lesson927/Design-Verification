@@ -54,7 +54,7 @@ add wave *
 add wave -poisition insertpoint sim:/tb_top/_if/s_axis_a_tvalid
 ```
 ## Makefile
-```bash
+```makefile
 all:compile elaborate simulate
 
 #Run compilation

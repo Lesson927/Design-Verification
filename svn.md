@@ -3,7 +3,7 @@
 ## 示例
 假设你有一个项目位于 /home/user/my_project，想备份到SVN仓库 /var/svn/my_repo
 ### 1.创建仓库目录
-```bash
+```svn
 #创建仓库目录
 mkdir -p /var/svn
 #创建svn仓库

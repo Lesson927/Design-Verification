@@ -45,7 +45,7 @@ grep 查找关键词
 ```bash
 tar tar -cd ex.tar yf
 ```
-##解压
+## 解压
 ```bash
 tar xvf simlib_questa10.6c.tar.gz
 ```

@@ -3,7 +3,7 @@
 
 ## 编译
 **compile.do**
-```tcl
+```do
 vlib work
 vmap work work
 #VHDL

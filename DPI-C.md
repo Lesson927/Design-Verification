@@ -14,12 +14,14 @@ gcc -shared -fPIC \
 -sv_lib ../../...abcd.so
 ```
 ## SV导入
+C侧
 ```C
 float calculate_result(int x) {
 
     return f;
 }
 ```
+SV侧
 ```systemverilog
 //数据类型需要转换
 import "DPI-C" function shortreal calculate_result(input int x);

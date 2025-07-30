@@ -42,3 +42,4 @@ verdi:
 ● 右下角改成上下布局  
 ● window -> Sync All waveforms by -> All
 就可以拖动光标统一时间对比波形
+![verdi]()

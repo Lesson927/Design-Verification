@@ -543,7 +543,7 @@ c_mutex： cover property(p_mutex);
 ```
 
 ## 一个例子
-这是一个简单的计数器，帮助我们很好的掌握SVA在验证中的架构。
+这是一个简单的计数器，帮助我们很好的掌握SVA在验证中的架构。  
 设计模块 simple_counter.sv
 ```systemverilog
 module simple_counter #(

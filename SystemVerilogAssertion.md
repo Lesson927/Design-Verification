@@ -673,7 +673,7 @@ package fifo_props_pkg;
     
 endpackage
 ```
-绑定模块 fifo_bind.sv
+属性模块 props.sv
 ```systemverilog
 module fifo_ctrl_assertions(
     input logic clk,
@@ -721,19 +721,6 @@ module fifo_ctrl_assertions(
     
 endmodule
 
-// 绑定模块到设计
-bind fifo_ctrl fifo_ctrl_assertions fifo_assert_inst (
-    .clk(clk),
-    .rst_n(rst_n),
-    .wr_en(wr_en),
-    .rd_en(rd_en),
-    .full(full),
-    .empty(empty),
-    .wr_ptr(wr_ptr),
-    .rd_ptr(rd_ptr),
-    .wr_ptr_reg(wr_ptr_reg),
-    .rd_ptr_reg(rd_ptr_reg)
-);
 ```
 tb顶层 fifo_tb.sv
 ```systemverilog
@@ -839,7 +826,20 @@ module fifo_tb;
         $dumpvars(0, fifo_tb);
     end
     
-    // 断言绑定 - 已经在fifo_bind.sv中完成
+    // 断言绑定
+    // 绑定模块到设计
+    bind fifo_ctrl fifo_ctrl_assertions fifo_assert_inst (
+        .clk(clk),
+        .rst_n(rst_n),
+        .wr_en(wr_en),
+        .rd_en(rd_en),
+        .full(full),
+        .empty(empty),
+        .wr_ptr(wr_ptr),
+        .rd_ptr(rd_ptr),
+        .wr_ptr_reg(wr_ptr_reg),
+        .rd_ptr_reg(rd_ptr_reg)
+    );
     
 endmodule
 ```

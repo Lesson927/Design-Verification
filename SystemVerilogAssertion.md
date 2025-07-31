@@ -543,221 +543,142 @@ c_mutex： cover property(p_mutex);
 ```
 
 ## 一个例子
-设计模块 fifo_ctrl.sv
+这是一个简单的计数器，帮助我们很好的掌握SVA在验证中的架构。
+设计模块 simple_counter.sv
 ```systemverilog
-module fifo_ctrl #(
-    parameter DEPTH = 8,
-    parameter ADDR_WIDTH = $clog2(DEPTH)
+module simple_counter #(
+    parameter WIDTH = 4
 )(
     input logic clk,
     input logic rst_n,
-    input logic wr_en,
-    input logic rd_en,
-    output logic full,
-    output logic empty,
-    output logic [ADDR_WIDTH-1:0] wr_ptr,
-    output logic [ADDR_WIDTH-1:0] rd_ptr
+    input logic en,        // 计数使能
+    input logic load,      // 同步加载
+    input logic [WIDTH-1:0] load_data, // 加载数据
+    output logic [WIDTH-1:0] count     // 计数器输出
 );
 
-    // 内部信号
-    logic [ADDR_WIDTH:0] wr_ptr_reg;
-    logic [ADDR_WIDTH:0] rd_ptr_reg;
-    
-    // 指针更新逻辑
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            wr_ptr_reg <= '0;
-            rd_ptr_reg <= '0;
-        end else begin
-            if (wr_en && !full) begin
-                wr_ptr_reg <= wr_ptr_reg + 1;
-            end
-            if (rd_en && !empty) begin
-                rd_ptr_reg <= rd_ptr_reg + 1;
-            end
+            count <= '0;
+        end else if (load) begin
+            count <= load_data;
+        end else if (en) begin
+            count <= count + 1;
         end
     end
-    
-    // 输出当前指针（去掉最高位）
-    assign wr_ptr = wr_ptr_reg[ADDR_WIDTH-1:0];
-    assign rd_ptr = rd_ptr_reg[ADDR_WIDTH-1:0];
-    
-    // 空满标志逻辑
-    assign full = (wr_ptr_reg[ADDR_WIDTH] != rd_ptr_reg[ADDR_WIDTH]) && 
-                  (wr_ptr_reg[ADDR_WIDTH-1:0] == rd_ptr_reg[ADDR_WIDTH-1:0]);
-    assign empty = (wr_ptr_reg == rd_ptr_reg);
-    
+
 endmodule
 ```
-断言属性定义 fifo_props.sv
+断言属性定义 counter_props.sv
 ```systemverilog
-package fifo_props_pkg;
+module counter_assertions #(
+    parameter WIDTH = 4
+)(
+    input logic clk,
+    input logic rst_n,
+    input logic en,
+    input logic load,
+    input logic [WIDTH-1:0] load_data,
+    input logic [WIDTH-1:0] count
+);
 
-    // 序列定义
-    sequence s_no_wr_when_full;
-        !(fifo_ctrl.full && fifo_ctrl.wr_en);
+        // 序列定义 - 仅包含时序关系，不含蕴含
+    sequence s_reset_sequence;
+        (!rst_n) ##1 rst_n;
     endsequence
     
-    sequence s_no_rd_when_empty;
-        !(fifo_ctrl.empty && fifo_ctrl.rd_en);
+    sequence s_load_sequence;
+        load ##1 !load;
     endsequence
     
-    sequence s_ptr_increment_after_wr;
-        fifo_ctrl.wr_en && !fifo_ctrl.full ##1 !fifo_ctrl.wr_en |-> 
-        (fifo_ctrl.wr_ptr == ($past(fifo_ctrl.wr_ptr) + 1));
+    sequence s_increment_sequence;
+        (en && !load) ##1 !en;
     endsequence
     
-    sequence s_ptr_increment_after_rd;
-        fifo_ctrl.rd_en && !fifo_ctrl.empty ##1 !fifo_ctrl.rd_en |-> 
-        (fifo_ctrl.rd_ptr == ($past(fifo_ctrl.rd_ptr) + 1);
+    sequence s_no_overflow_sequence;
+        (count != '1) or (!en);
     endsequence
     
-    sequence s_full_assertion;
-        ((fifo_ctrl.wr_ptr_reg[ADDR_WIDTH] != fifo_ctrl.rd_ptr_reg[ADDR_WIDTH]) && 
-         (fifo_ctrl.wr_ptr_reg[ADDR_WIDTH-1:0] == fifo_ctrl.rd_ptr_reg[ADDR_WIDTH-1:0])) |-> 
-        fifo_ctrl.full;
-    endsequence
-    
-    sequence s_empty_assertion;
-        (fifo_ctrl.wr_ptr_reg == fifo_ctrl.rd_ptr_reg) |-> fifo_ctrl.empty;
-    endsequence
-    
-    sequence s_no_simultaneous_wr_rd_after_reset;
-        $rose(fifo_ctrl.rst_n) |-> ##[0:10] (fifo_ctrl.wr_en && fifo_ctrl.rd_en);
-    endsequence
-    
-    // 属性定义
-    property p_no_wr_when_full;
-        @(posedge fifo_ctrl.clk) disable iff (!fifo_ctrl.rst_n)
-        s_no_wr_when_full;
+    // 属性定义 - 在这里使用蕴含
+    property p_reset_count_zero;
+        @(posedge clk) 
+        s_reset_sequence |-> (count == 0);
     endproperty
     
-    property p_no_rd_when_empty;
-        @(posedge fifo_ctrl.clk) disable iff (!fifo_ctrl.rst_n)
-        s_no_rd_when_empty;
+    property p_load_operation;
+        @(posedge clk) disable iff (!rst_n)
+        s_load_sequence |-> (count == $past(load_data));
     endproperty
     
-    property p_ptr_increment_after_wr;
-        @(posedge fifo_ctrl.clk) disable iff (!fifo_ctrl.rst_n)
-        s_ptr_increment_after_wr;
+    property p_increment_operation;
+        @(posedge clk) disable iff (!rst_n)
+        s_increment_sequence |-> (count == ($past(count) + 1));
     endproperty
     
-    property p_ptr_increment_after_rd;
-        @(posedge fifo_ctrl.clk) disable iff (!fifo_ctrl.rst_n)
-        s_ptr_increment_after_rd;
-    endproperty
-    
-    property p_full_assertion;
-        @(posedge fifo_ctrl.clk) disable iff (!fifo_ctrl.rst_n)
-        s_full_assertion;
-    endproperty
-    
-    property p_empty_assertion;
-        @(posedge fifo_ctrl.clk) disable iff (!fifo_ctrl.rst_n)
-        s_empty_assertion;
-    endproperty
-    
-    property p_no_simultaneous_wr_rd_after_reset;
-        @(posedge fifo_ctrl.clk)
-        s_no_simultaneous_wr_rd_after_reset;
+    property p_no_overflow;
+        @(posedge clk) disable iff (!rst_n)
+        s_no_overflow_sequence;
     endproperty
     
     // 覆盖率属性
-    property p_cov_wr_while_full;
-        @(posedge fifo_ctrl.clk) fifo_ctrl.full && fifo_ctrl.wr_en;
+    property p_cov_load_operation;
+        @(posedge clk) load;
     endproperty
     
-    property p_cov_rd_while_empty;
-        @(posedge fifo_ctrl.clk) fifo_ctrl.empty && fifo_ctrl.rd_en;
+    property p_cov_max_count;
+        @(posedge clk) (count == '1);
     endproperty
-    
-endpackage
-```
-属性模块 props.sv
-```systemverilog
-module fifo_ctrl_assertions(
-    input logic clk,
-    input logic rst_n,
-    input logic wr_en,
-    input logic rd_en,
-    input logic full,
-    input logic empty,
-    input logic [ADDR_WIDTH-1:0] wr_ptr,
-    input logic [ADDR_WIDTH-1:0] rd_ptr,
-    input logic [ADDR_WIDTH:0] wr_ptr_reg,
-    input logic [ADDR_WIDTH:0] rd_ptr_reg
-);
-    
-    import fifo_props_pkg::*;
-    
-    // 假设参数传递
-    parameter ADDR_WIDTH = 3;
-    
-    // 直接断言
-    always @(posedge clk) begin
-        // 立即断言
-        assert (!(full && empty)) else $error("FIFO cannot be full and empty at the same time");
-    end
-    
+
     // 并发断言
-    assert property (p_no_wr_when_full) else $error("Write while FIFO is full");
-    assert property (p_no_rd_when_empty) else $error("Read while FIFO is empty");
-    assert property (p_ptr_increment_after_wr) else $error("Write pointer not incremented after write");
-    assert property (p_ptr_increment_after_rd) else $error("Read pointer not incremented after read");
-    assert property (p_full_assertion) else $error("Full flag not set correctly");
-    assert property (p_empty_assertion) else $error("Empty flag not set correctly");
-    assert property (p_no_simultaneous_wr_rd_after_reset) else $error("No simultaneous write and read after reset");
+    assert property (p_reset_count_zero) else $error("Counter not zero after reset");
+    assert property (p_load_operation) else $error("Load operation failed");
+    assert property (p_increment_operation) else $error("Increment operation failed");
+    assert property (p_no_overflow) else $error("Counter overflow");
     
     // 覆盖点
-    cover property (p_cov_wr_while_full);
-    cover property (p_cov_rd_while_empty);
+    cover property (p_reset_count_zero);
+    cover property (p_load_operation);
+    cover property (p_increment_operation);
+    cover property (p_no_overflow);
     
-    // 序列覆盖
-    sequence s_fifo_transition_empty_to_full;
-        fifo_ctrl.empty ##1 fifo_ctrl.full[*1:$] ##1 !fifo_ctrl.full;
-    endsequence
+    cover property (p_cov_load_operation);
+    cover property (p_cov_max_count);
     
-    cover property (s_fifo_transition_empty_to_full);
-    
+
+
 endmodule
 
+
 ```
-tb顶层 fifo_tb.sv
+tb顶层 counter_tb.sv
 ```systemverilog
 `timescale 1ns/1ps
-
-module fifo_tb;
-    import fifo_props_pkg::*;
+module counter_tb;
+    
     
     // 参数
-    parameter DEPTH = 8;
-    parameter ADDR_WIDTH = $clog2(DEPTH);
+    parameter WIDTH = 4;
     
     // 时钟和复位
     logic clk;
     logic rst_n;
     
     // DUT接口
-    logic wr_en;
-    logic rd_en;
-    logic full;
-    logic empty;
-    logic [ADDR_WIDTH-1:0] wr_ptr;
-    logic [ADDR_WIDTH-1:0] rd_ptr;
+    logic en;
+    logic load;
+    logic [WIDTH-1:0] load_data;
+    logic [WIDTH-1:0] count;
     
     // 实例化DUT
-    fifo_ctrl #(
-        .DEPTH(DEPTH),
-        .ADDR_WIDTH(ADDR_WIDTH)
+    simple_counter #(
+        .WIDTH(WIDTH)
     ) dut (
         .clk(clk),
         .rst_n(rst_n),
-        .wr_en(wr_en),
-        .rd_en(rd_en),
-        .full(full),
-        .empty(empty),
-        .wr_ptr(wr_ptr),
-        .rd_ptr(rd_ptr)
+        .en(en),
+        .load(load),
+        .load_data(load_data),
+        .count(count)
     );
     
     // 时钟生成
@@ -769,76 +690,68 @@ module fifo_tb;
     // 测试序列
     initial begin
         // 初始化
-        wr_en = 0;
-        rd_en = 0;
+        en = 0;
+        load = 0;
+        load_data = 0;
         rst_n = 0;
         
-        // 复位
+        // 复位测试
         #10 rst_n = 1;
         
-        // 测试1: 写满FIFO
-        $display("Test 1: Filling the FIFO");
-        for (int i = 0; i < DEPTH; i++) begin
+        // 测试1: 简单计数
+        $display("Test 1: Simple counting");
+        repeat(5) begin
             @(posedge clk);
-            wr_en = 1;
-            @(posedge clk);
-            wr_en = 0;
+            en = 1;
         end
-        
-        // 测试2: 尝试在满时写入
-        $display("Test 2: Attempting to write when full");
         @(posedge clk);
-        wr_en = 1;
-        @(posedge clk);
-        wr_en = 0;
+        en = 0;
         
-        // 测试3: 读空FIFO
-        $display("Test 3: Emptying the FIFO");
-        for (int i = 0; i < DEPTH; i++) begin
+        // 测试2: 加载操作
+        $display("Test 2: Load operation");
+        @(posedge clk);
+        load = 1;
+        load_data = 4'hA;
+        @(posedge clk);
+        load = 0;
+        
+        // 测试3: 计数到最大值
+        $display("Test 3: Count to max value");
+        repeat(2**WIDTH) begin
             @(posedge clk);
-            rd_en = 1;
-            @(posedge clk);
-            rd_en = 0;
+            en = 1;
         end
-        
-        // 测试4: 尝试在空时读取
-        $display("Test 4: Attempting to read when empty");
         @(posedge clk);
-        rd_en = 1;
-        @(posedge clk);
-        rd_en = 0;
+        en = 0;
         
-        // 测试5: 同时读写
-        $display("Test 5: Simultaneous read and write");
+        // 测试4: 随机操作
+        $display("Test 4: Random operations");
         repeat(10) begin
             @(posedge clk);
-            wr_en = $urandom_range(0,1);
-            rd_en = $urandom_range(0,1);
+            en = $urandom_range(0,1);
+            load = $urandom_range(0,1);
+            load_data = $urandom_range(0, 2**WIDTH-1);
         end
         
+        
+        $display("All test finished");
         // 结束仿真
         #100 $finish;
     end
     
-    // 波形转储
-    initial begin
-        $dumpfile("fifo_wave.vcd");
-        $dumpvars(0, fifo_tb);
-    end
+
     
     // 断言绑定
     // 绑定模块到设计
-    bind fifo_ctrl fifo_ctrl_assertions fifo_assert_inst (
+    bind simple_counter counter_assertions #(
+        .WIDTH(WIDTH)
+    ) counter_assert_inst (
         .clk(clk),
         .rst_n(rst_n),
-        .wr_en(wr_en),
-        .rd_en(rd_en),
-        .full(full),
-        .empty(empty),
-        .wr_ptr(wr_ptr),
-        .rd_ptr(rd_ptr),
-        .wr_ptr_reg(wr_ptr_reg),
-        .rd_ptr_reg(rd_ptr_reg)
+        .en(en),
+        .load(load),
+        .load_data(load_data),
+        .count(count)
     );
     
 endmodule

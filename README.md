@@ -7,3 +7,14 @@ Lesson begin on 2025/7/25
 Linux 常用命令
 ## SystemVerilogAssertion
 依据《SystemVerilog Assertion应用指南》总结要点
+## DPI-C接口
+
+## Questasim仿真环境以及命令
+
+## 代码对比工具bcompare
+
+## 文本编辑工具gVim
+
+## 版本控制工具svn
+
+## 波形查看工具verdi

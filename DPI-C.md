@@ -41,7 +41,8 @@ ldd your_library.so
 ```
 <img width="1494" height="258" alt="image" src="https://github.com/user-attachments/assets/21037cc8-a825-4150-ae6c-b379f9e8bdc3" />
 **如图该.so有多个依赖库，并且有特定路径，需要用此.so需要放置正确路径下运用.so**  
-### 链接
+
+### 链接库
 软连接  
 ```bash
 # 创建软链接

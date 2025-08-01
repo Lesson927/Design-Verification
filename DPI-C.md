@@ -27,3 +27,16 @@ SV侧
 import "DPI-C" function shortreal calculate_result(input int x);
 import "DPI-C" function void print_binary(input real d, input int precision);
 ```
+## 关于可恨的.so文件
+在c编译成.so文件中踩过的坑
+### 验证有效
+```bash
+# 检查文件类型
+file your_library.so
+# 应显示类似：ELF 64-bit LSB shared object, x86-64
+
+# 检查依赖项
+ldd your_library.so
+# 查看是否有 "not found" 的依赖项
+```
+<img width="1494" height="258" alt="image" src="https://github.com/user-attachments/assets/21037cc8-a825-4150-ae6c-b379f9e8bdc3" />

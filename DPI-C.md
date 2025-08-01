@@ -46,7 +46,6 @@ ldd your_library.so
 ```bash
 # 创建软链接
 ln -s original_library.so new_name.so
-
 # 验证链接
 ls -l new_name.so
 # 应显示：new_name.so -> original_library.so

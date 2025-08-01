@@ -40,3 +40,14 @@ ldd your_library.so
 # 查看是否有 "not found" 的依赖项
 ```
 <img width="1494" height="258" alt="image" src="https://github.com/user-attachments/assets/21037cc8-a825-4150-ae6c-b379f9e8bdc3" />
+**如图该.so有多个依赖库，并且有特定路径，需要用此.so需要放置正确路径下运用.so**
+### 链接
+软连接
+```bash
+# 创建软链接
+ln -s original_library.so new_name.so
+
+# 验证链接
+ls -l new_name.so
+# 应显示：new_name.so -> original_library.so
+```

@@ -4,10 +4,10 @@
 ## 编译
 **compile.do**
 ```do
-vlib work
-vmap work work
+vlib work                   #创建仿真库
+vmap work work              #链接逻辑库到物理库
 #VHDL
-vcom -work work -64 -debug +acc \
+vcom -work work -64 -debug +acc \         #-work 编译库
 "../../hdl/file.vhd" \
 ...
 #verilog
@@ -32,11 +32,11 @@ x：FSM 覆盖率（eXtended FSM Coverage）
 ## 优化
 **elaborate.do**
 ```do
-vopt -64 +acc -l elaborate.log -L work -L unisims_ver -L unimacro_ver -L secureip -L xpm -work work work.tb_top work .glbl -o tb_top_opt
+vopt -64 +acc -l elaborate.log -L work -L unisims_ver -L unimacro_ver -L secureip -L xpm -work work work.tb_top work .glbl -o tb_top_opt  #-L 引用仿真库
 ```
 ## 仿真
 ```do
-vsim -t 1ps -lib work tb_top_opt -coverage -sv_lib ../../.. -pli /tools/synopsys/verdi/U-2023.03/share/PLI/MODELSIM/linux64/novas_fli.so
+vsim -t 1ps -lib work tb_top_opt -coverage -sv_lib ../../.. -pli /tools/synopsys/verdi/U-2023.03/share/PLI/MODELSIM/linux64/novas_fli.so  #-sv_lib -pli 引用第三方库
 coverage save -onexit test.ucdb
 
 do {wave.do}
@@ -88,3 +88,4 @@ clean:
 
 .PHONY: all compile elaborate simulate clean
 ```
+

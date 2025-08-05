@@ -29,7 +29,7 @@ Directory：选择网表文件的保存位置，例如项目目录下的 netlist
 ### Vivado 运行后仿真
 Run simulation  
 Run Post-Implementation simulation  
-通常来说后仿真脚本在project.sim/sim1/impl/questa
+通常来说后仿真脚本，网表，sdf在project.sim/sim1/impl/questa
 
 ### 导出vivado自带的后仿真脚本
 点击 File > Export > Export Simulation

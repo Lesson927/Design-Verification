@@ -5,11 +5,17 @@ Lesson begin on 2025/7/25
 这些文档主要记录我开始IC验证工作以来的学习过程。  
 ## Linux
 Linux 常用命令
+## Systemverilog
+Systemverilog基本语法
 ## SystemVerilogAssertion
 依据《SystemVerilog Assertion应用指南》总结要点
 ## DPI-C接口
 
 ## Questasim仿真环境以及命令
+主要关乎前仿真相关内容
+
+## Post-simulation 
+主要关乎后仿真相关内容
 
 ## 代码对比工具bcompare
 

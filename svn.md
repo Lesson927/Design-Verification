@@ -1,7 +1,7 @@
 # 版本控制工具svn
 
 ## 示例
-假设你有一个项目位于 /home/user/my_project，想备份到SVN仓库 /var/svn/my_repo
+假设你有一个项目位于 `/home/user/my_project`，想备份到SVN仓库 `/var/svn/my_repo`  
 ### 1.创建仓库目录
 ```svn
 #创建仓库目录
@@ -64,3 +64,4 @@ svn merge ../branches/my_branch/
 svn status
 svn commit -m "添加"
 ```
+

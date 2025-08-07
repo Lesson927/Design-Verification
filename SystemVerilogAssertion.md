@@ -104,7 +104,7 @@ SVA在sequence,property,assert其一需要有“时序检查”
 a 成功 b 成功  结果 成功  
 a 成功 b 失败  结果 失败  
 a 失败 b 都行  结果 空成功  
-**只能在属性（property）中使用蕴含**  
+**！！！只能在属性（property）中使用蕴含！！！**  
 
 ### 交叠蕴含 “-|>”
 
@@ -757,6 +757,7 @@ module counter_tb;
     
 endmodule
 ```
+
 
 
 

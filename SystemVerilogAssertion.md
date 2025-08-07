@@ -95,7 +95,7 @@ SVA在sequence,property,assert其一需要有“时序检查”
 
 ## 禁止属性
 
-not 期望某个属性为假，为假时断言成功。
+`not` 期望某个属性为假，为假时断言成功。
 
 ## 蕴含（Implication）
 先行算子（antecedent） 类似于if
@@ -756,4 +756,5 @@ module counter_tb;
     
 endmodule
 ```
+
 

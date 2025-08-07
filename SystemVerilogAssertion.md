@@ -39,7 +39,7 @@ endproperty
 ```
 
 断言
-s_a:assert property(p_expr);
+`s_a:assert property(p_expr);`
 
 以上三部分构成一个完整的SVA块，但是实际使用可能不需要全部。
 
@@ -756,3 +756,4 @@ module counter_tb;
     
 endmodule
 ```
+

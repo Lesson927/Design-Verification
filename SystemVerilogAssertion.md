@@ -381,7 +381,7 @@ a34： assert property(p34);
 ```
 若信号reset为高则不执行后续检验。
 
-## intersect构造
+## intersect构造控制长度
 ```systemverilog
 property p35; 
     (@(posedge clk)  1[*2:5] intersect  
@@ -757,6 +757,7 @@ module counter_tb;
     
 endmodule
 ```
+
 
 
 

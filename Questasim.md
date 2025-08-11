@@ -29,6 +29,7 @@ s：语句覆盖率（Statement Coverage）
 t: 翻转覆盖率（Toggle Coverage）  
 f：函数覆盖率（Function Coverage）  
 x：FSM 覆盖率（eXtended FSM Coverage）  
+`vcover merge -out merged_coverage.ucdb test1.ucdb test2.ucdb test3.ucdb`用于合并多个ucdb文件  
 ## 优化
 **elaborate.do**
 ```do
@@ -88,4 +89,5 @@ clean:
 
 .PHONY: all compile elaborate simulate clean
 ```
+
 

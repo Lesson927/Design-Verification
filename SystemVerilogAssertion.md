@@ -434,6 +434,7 @@ endsequence
 当在一个序列中使用了多个时钟信号时，只允许使用“##1”延迟构造。使用“##0”会产生混淆，即在信号“a”匹配后究竟哪个时钟信号才是最近的时钟。这将引起竞争，因此不允许使用。使用##2 也不允许，因为不可能同步到时钟“clk2”的最近的上升沿。
 禁止在两个不同时钟驱动的序列之间使用交叠蕴含运算符。因为先行算子的结束和后续算子的开始重叠，可能引起竞争的情况，这是非法的。下面的代码显示了这种非法的编码方式：
 ```systemverilog
+//这是一个非法的代码
 property p_multiple_clocks_implied_illegal; 
     @(posedge clk1) s1 |-> @(posedge clk2) s2; 
 endproperty 
@@ -757,6 +758,7 @@ module counter_tb;
     
 endmodule
 ```
+
 
 
 

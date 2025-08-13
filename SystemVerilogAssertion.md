@@ -288,7 +288,7 @@ Property p26;
 endproperty 
 a26： assert property(p26); 
 ```
-信号a第3次匹配成功后不需要信号stop为高不必在下一个时钟发生，往后有发生即可。
+信号a第3次匹配成功后信号stop为高不必在下一个时钟发生，往后有发生即可。
 
 ## and构造
 ```systemverilog
@@ -757,6 +757,7 @@ module counter_tb;
     
 endmodule
 ```
+
 
 
 

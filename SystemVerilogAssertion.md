@@ -106,7 +106,7 @@ a 成功 b 失败  结果 失败
 a 失败 b 都行  结果 空成功  
 **！！！只能在属性（property）中使用蕴含！！！**  
 
-### 交叠蕴含 “-|>”
+### 交叠蕴含 “|->”
 
 ```systemverilog
 property p8;
@@ -758,6 +758,7 @@ module counter_tb;
     
 endmodule
 ```
+
 
 
 

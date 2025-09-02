@@ -1,5 +1,5 @@
 # gVim常用命令
-
+🦡😿
 ## 补全
 **ctrl + P**
 ## 跳转
@@ -16,10 +16,13 @@ __shift +*__
 **yy y5y**  
 ## 替换
 全局：**%s/xx/yy/gc**  
-局部：**：63，72s/xx/yy/gc**
+局部：**：63，72s/xx/yy/gc**  
+## 查找删除带xxx的某一行
+**:g/xxx/d**
 ## 列操作
 **ctrl + q**  
     delete 删除  
     ctrl + c/v 复制粘贴  
     I 插入 ... esc 退出  
     
+

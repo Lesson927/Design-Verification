@@ -43,3 +43,10 @@ verdi:
 ● window -> Sync All waveforms by -> All
 就可以拖动光标统一时间对比波形
 ![verdi](https://github.com/Lesson927/IC-verification/blob/main/images/verdi.png)
+
+
+<img width="1938" height="853" alt="image" src="https://github.com/user-attachments/assets/ec88b3d2-c6ff-4ceb-acee-1de9675cb082" />  
+顶栏导入文件或者跳转被驱、驱动模块，信号，查找等等  
+中键拖入波形  
+底部波形 顶部波形操作      
+

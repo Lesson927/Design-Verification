@@ -49,8 +49,10 @@ svn checkout file:///var/svn/my_repo/tags/backup-20250728 my_project_restore
 svn info file:///var/svn/my_repo/trunk my_project
 svn info file:///var/svn/my_repo/tags
 ```
-### 8.版本回退
+### 8.版本更新/回退
 ```bash
+svn up
+svn up -r r7 
 svn merge -r 8:7 README.me
 ```
 ### 9.查看历史信息
@@ -64,4 +66,5 @@ svn merge ../branches/my_branch/
 svn status
 svn commit -m "添加"
 ```
+
 

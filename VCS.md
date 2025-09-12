@@ -75,7 +75,7 @@ build:
 run:
 
     #simulate
-    @(cd $(TC); \
+    @(cd $(TC); \   ##接下来操作生成文件都在该文件目录下
     ./$(EXE) -ucli -do sim.do -l $(SIM_LOG_FILE);
     grep "\*E" $(SIM_LOG_FILE) || echo "PASSED")
 
@@ -90,6 +90,7 @@ verdi:
 clean:
     rm -rf novas.conf verdilog $(TC)
     #使用make clean 要带 TC=ABC
+
 
 
 ```

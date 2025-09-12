@@ -6,4 +6,6 @@
 **ctrl + R  copy to right**  
 **ctrl + L  copy to left**  
 
-GUI选项
+
+GUI选项  
+**一般来说人眼merge+check in只需bcompare两版工程文件夹然后通过GUI界面左右拷贝即可**

@@ -30,10 +30,11 @@ verdi:
 ## 常用波形操作
 
 ### 基础
-● 直接拖入波形  
+● 直接拖入波形/Ctrl+W  
 ● 点击波形右键可切换Digital/Analog  
 ● view -> Compress Time Range 折叠时间区间
 ● trace drive/load
+● 双击波形变化可以追溯到导致变化的代码
 
 ### 两波型对比
 ● window -> Dock to -> 新建一个Dock(第一个波形自动放进去)  
@@ -49,4 +50,5 @@ verdi:
 顶栏导入文件或者跳转被驱、驱动模块，信号，查找等等  
 中键拖入波形  
 底部波形 顶部波形操作      
+
 

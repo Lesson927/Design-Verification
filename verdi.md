@@ -51,4 +51,9 @@ verdi:
 中键拖入波形  
 底部波形 顶部波形操作      
 
+verdi 保存波形信号  
+波形界面->File->Save Signal  
+verdi 导入波形信号  
+波形界面->File->Restore Signal
+
 

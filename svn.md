@@ -59,6 +59,8 @@ svn merge -r 8:7 README.me
 ```bash
 svn log
 svn diff
+svn diff -r 123 #当前版本和某一个版本对比
+svn diff -r 122：123 #对比某个旧版本与相对新的版本
 ```
 ### 10.分支
 ```bash
@@ -66,5 +68,6 @@ svn merge ../branches/my_branch/
 svn status
 svn commit -m "添加"
 ```
+
 
 

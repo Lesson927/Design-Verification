@@ -53,7 +53,7 @@ svn info file:///var/svn/my_repo/tags
 ```bash
 svn up
 svn up -r r7 
-svn merge -r 8:7 README.me
+svn merge -r 8:7 README.me #恢复版本8相对于7的更改，但是日志没有改变，提交了就是提交了。和上一条命令是一样的，一般用上一条够了
 ```
 ### 9.查看历史信息
 ```bash
@@ -68,6 +68,7 @@ svn merge ../branches/my_branch/
 svn status
 svn commit -m "添加"
 ```
+
 
 
 

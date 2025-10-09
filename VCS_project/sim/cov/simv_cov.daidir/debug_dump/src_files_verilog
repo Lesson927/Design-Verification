@@ -1,0 +1,11 @@
+/home/autumn/hhh/prj/rtl/switch.v
+/home/autumn/hhh/tb/tb_env/driver.sv
+/home/autumn/hhh/tb/tb_env/env.sv
+/home/autumn/hhh/tb/tb_env/generator.sv
+/home/autumn/hhh/tb/tb_env/interface.sv
+/home/autumn/hhh/tb/tb_env/item.sv
+/home/autumn/hhh/tb/tb_env/monitor.sv
+/home/autumn/hhh/tb/tb_env/scoreboard.sv
+/home/autumn/hhh/tb/tb_env/tb_top.sv
+/home/autumn/hhh/tb/tb_env/test.sv
+/home/autumn/hhh/tcase/TC-001.sv

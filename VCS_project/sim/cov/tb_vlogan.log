@@ -1,0 +1,28 @@
+
+Warning-[UNKWN_IGOPTS] Unknown option(s) ignored
+  Unknown option(s) '-cm ' passed to 'vlogan' command line is(are) ignored.
+  Please make sure that there are no typos in the option(s) passed, or the 
+  options are only applicable to VCS at elaboration step. Also check 'vlogan 
+  -help' for supported options. 
+
+Command: vlogan -full64 -nc -lca +v2k -cm line+cond+fsm+tgl+branch+assert +incdir+../../tcase \
+-work work -timescale=1ns/1ns -sverilog -f ../../tb/filelist/tb_filelist -l tb_vlogan.log \
+
+
+Warning-[LCA_FEATURES_ENABLED] Usage warning
+  LCA features enabled by '-lca' argument on the command line.  For more 
+  information regarding list of LCA features please refer to Chapter "LCA 
+  features" in the VCS Release Notes
+
+Parsing design file '../../tb/tb_env/item.sv'
+Parsing design file '../../tb/tb_env/generator.sv'
+Parsing design file '../../tb/tb_env/driver.sv'
+Parsing design file '../../tb/tb_env/monitor.sv'
+Parsing design file '../../tb/tb_env/scoreboard.sv'
+Parsing design file '../../tb/tb_env/env.sv'
+Parsing design file '../../tb/tb_env/test.sv'
+Parsing design file '../../tb/tb_env/interface.sv'
+Parsing design file '../../tb/tb_env/tb_top.sv'
+Parsing included file '../../tcase/TC-001.sv'.
+Back to file '../../tb/tb_env/tb_top.sv'.
+CPU time: .085 seconds to compile

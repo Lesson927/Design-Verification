@@ -1,0 +1,10 @@
+../../tb/tb_env/item.sv
+../../tb/tb_env/generator.sv
+../../tb/tb_env/driver.sv
+../../tb/tb_env/monitor.sv
+../../tb/tb_env/scoreboard.sv
+../../tb/tb_env/env.sv
+../../tb/tb_env/test.sv
+../../tb/tb_env/interface.sv
+../../tb/tb_env/tb_top.sv
+

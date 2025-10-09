@@ -1,0 +1,34 @@
+Doing common elaboration 
+                         Chronologic VCS (TM)
+      Version Q-2020.03-SP2-7_Full64 -- Tue Oct  7 10:07:30 2025
+               Copyright (c) 1991-2020 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Top Level Modules:
+       tb_top
+TimeScale is 1 ns / 1 ps
+VCS Coverage Metrics Release Q-2020.03-SP2-7_Full64 Copyright (c) 1991-2020 by Synopsys Inc.
+Starting vcs inline pass...
+3 modules and 0 UDP read.
+Generating code for _VCSgd_reYIK
+Generating code for _VCSgd_fM3Bt
+Generating code for _VCSgd_jdPWL
+recompiling module tb_top
+Generating code for _VCSgd_IE5yk
+recompiling module switch_if
+Generating code for _VCSgd_Kv9Tb
+recompiling module switch
+All of 3 modules done
+make[1]: Entering directory `/home/autumn/hhh/sim/build'
+make[1]: Leaving directory `/home/autumn/hhh/sim/build'
+make[1]: Entering directory `/home/autumn/hhh/sim/build'
+rm -f _cuarc*.so _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+if [ -x /home/autumn/hhh/sim/cov/./simv_cov ]; then chmod a-x /home/autumn/hhh/sim/cov/./simv_cov; fi
+g++  -o /home/autumn/hhh/sim/cov/./simv_cov      -rdynamic -Wl,-rpath='$ORIGIN'/simv_cov.daidir -Wl,-rpath=./simv_cov.daidir -Wl,-rpath=/opt/Synopsys/vcs_202003/Q-2020.03-SP2-7/linux64/lib -L/opt/Synopsys/vcs_202003/Q-2020.03-SP2-7/linux64/lib -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _30775_archive_1.so  SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -lvirsim -lreader_common /opt/Synopsys/vcs_202003/Q-2020.03-SP2-7/linux64/lib/libBA.a -luclinative /opt/Synopsys/vcs_202003/Q-2020.03-SP2-7/linux64/lib/vcs_tls.o   -Wl,-whole-archive  -lvcsucli    -Wl,-no-whole-archive        _vcs_pli_stub_.o   /opt/Synopsys/vcs_202003/Q-2020.03-SP2-7/linux64/lib/vcs_save_restore_new.o /opt/Synopsys/verdi_202012/R-2020.12-SP1/share/PLI/VCS/LINUX64/pli.a -ldl  -lc -lm -lpthread -ldl 
+/home/autumn/hhh/sim/cov/./simv_cov up to date
+make[1]: Leaving directory `/home/autumn/hhh/sim/build'
+CPU time: .476 seconds to compile + .310 seconds to elab + .331 seconds to link

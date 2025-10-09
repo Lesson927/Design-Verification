@@ -1,0 +1,27 @@
+
+VLOGAN	= vlogan
+VLOGAN_OPT	= -l tb_vlogan.log -full64 +v2k +incdir+../../tcase -timescale=1ns/1ns -sverilog -work work -full64
+
+all :		_VCSgd_uXvGI_1.db \
+	_VCSgd_s6OsVb_1.db \
+	_VCSgd_ZNrSSb_1.db \
+	_VCSgd_IA0QLc_1.db \
+
+
+
+_VCSgd_uXvGI_1.db :	../../tb/tb_env/item.sv 
+		${VLOGAN}  ${VLOGAN_OPT} ../../tb/tb_env/item.sv
+
+
+_VCSgd_s6OsVb_1.db :	../../tb/tb_env/interface.sv 
+		${VLOGAN}  ${VLOGAN_OPT} ../../tb/tb_env/interface.sv
+
+
+_VCSgd_ZNrSSb_1.db :	../../tb/tb_env/tb_top.sv 
+		${VLOGAN}  ${VLOGAN_OPT} ../../tb/tb_env/tb_top.sv
+
+
+_VCSgd_IA0QLc_1.db :	../../prj/rtl/switch.v 
+		${VLOGAN}  ${VLOGAN_OPT} ../../prj/rtl/switch.v
+
+

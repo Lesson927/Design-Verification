@@ -1,0 +1,79 @@
+############# BASI VARIABLE
+TB_TOP      = tb_top
+TC          ?= 
+#DUT_DEFINE  ?=
+
+############# DIRECTOR PATHS
+BUILD_DIR       := build
+LIB_DIR         := simlib/libero_lib
+TASK_DIR		:= 
+TC_DIR			:= ../../tcase
+NETLIST		:= ../../prj/gate/switch.v 
+
+############# COMPILE
+
+DEFINE = 
+VHDLAN_OPTS =	
+VLOGAN_OPTS = -V -nc -sverilog -full64 -kdb -skip_translate_body -timescale=1ps/1ps -lca +librescan +v2k +systemverilogext+.sv
+VCS_OPTS	= -full64 -debug_acc+all+dmptf -debug_region+cell+encrypt -debug_access+idents_db -notice
+EXE = simv
+
+############# FILELIST
+DUT_FILELIST			 = -f ../../prj/filelist/dut_filelist
+TB_FILELIST              = -f ../../tb/filelist/tb_filelist
+
+############# COVERAGE CONFIGURATION
+COV		    ?= 0
+COV_TYPES   ?= line+cond+fsm+tgl+branch+assert
+
+
+############# COVERAGE OPTIONS
+# 根据覆盖率选项添加标志
+ifeq ($(COV),1)
+VLOGAN_OPTS += -cm $(COV_TYPES)
+VCS_OPTS += -cm $(COV_TYPES)
+SIM_OPTS = -cm $(COV_TYPES)
+EXE = simv_cov
+else
+SIM_OPTS =
+endif
+
+############# BUILD & RUN 
+#### ALSO YOU CAN SAY
+############# COMPILE ELABORATE SIMULATION
+
+all: build run
+	@echo "Simulation Done"
+
+build:
+	@mkdir -p $(TC) $(BUILD_DIR)
+	@(cd $(TC) && \
+	vlogan $(VLOGAN_OPTS) -work work $(DUT_FILELIST) -l dut_vlogan.log; \
+	vlogan $(VLOGAN_OPTS) +incdir+$(TC_DIR) -work work -timescale=1ns/1ns -sverilog $(TB_FILELIST) -l tb_vlogan.log; \
+	vcs $(VCS_OPTS) work.$(TB_TOP) -Mdir=$(CURDIR)/$(BUILD_DIR) -o ./$(EXE) 2>&1 | tee run.log)
+
+run:
+	#simulate
+	@(cd $(TC); \
+	echo "run" > sim.do; \
+	./$(EXE) -ucli -do sim.do $(SIM_OPTS) -l sim.log)
+
+############# VERDI
+verdi:
+	@(cd $(TC); \
+	vericom -work work $(DUT_FILELIST) $(TB_FILELIST) -l verdi.log; \
+	verdi -lib work -top $(TB_TOP))
+
+covreport:
+	@(cd $(TC); \
+	urg -dir simv_cov.vdb -report coverage_report)
+
+gate:
+	@mkdir -p $(TC) $(BUILD_DIR)
+	@(cd $(TC) && \
+	vlogan $(VLOGAN_OPTS) -work work $(NETLIST) -l dut_vlogan.log; \
+	vlogan $(VLOGAN_OPTS) +define+GATE_SIM +incdir+$(TC_DIR) -work work -timescale=1ns/1ns -sverilog $(TB_FILELIST) -l tb_vlogan.log; \
+	vcs $(VCS_OPTS) work.$(TB_TOP) -Mdir=$(CURDIR)/$(BUILD_DIR) -o ./$(EXE) 2>&1 | tee run.log)
+
+clean:
+	rm -rf $(TC) build

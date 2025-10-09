@@ -1,0 +1,169 @@
+Command: /home/autumn/hhh/sim/cov/./simv_cov -ucli -do sim.do -cm line+cond+fsm+tgl+branch+assert -l sim.log
+Chronologic VCS simulator copyright 1991-2020
+Contains Synopsys proprietary information.
+Compiler version Q-2020.03-SP2-7_Full64; Runtime version Q-2020.03-SP2-7_Full64;  Oct  7 10:07 2025
+ucli% run
+*Verdi* Loading libsscore_vcs202003.so
+FSDB Dumper for VCS, Release Verdi_R-2020.12-SP1, Linux x86_64/64bit, 03/02/2021
+(C) 1996 - 2021 by Synopsys, Inc.
+*Verdi* : Create FSDB file 'top.fsdb'
+*Verdi* : Begin traversing the scope (tb_top), layer (0).
+*Verdi* : End of traversing.
+*Verdi* : Begin traversing the MDAs, layer (0).
+*Verdi* : Enable +mda and +packedmda dumping.
+*Verdi* : End of traversing the MDAs.
+RTL simulation
+T=0 [Driver] starting ...
+T=0 [Monitor] starting ...
+T = 0 [Generator] Loop : 1/20 creat next item
+T=10000 [Driver] waiting for item ...
+T=10000 Driver addr=0x9 data=0x5f addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=30000 [Driver] waiting for item ...
+T=30000 [Monitor] Thread0 First part over
+T = 30000 [Generator] Loop : 2/20 creat next item
+T=30000 Driver addr=0xe data=0xe8 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=50000 [Monitor] Thread0 Second part over
+T=50000 Monitor_Thread0 addr=0x9 data=0x5f addr_a=0x9 data_a=0x5f addr_b=0x0 data_b=0x0
+T=50000 [Driver] waiting for item ...
+T=50000 [Monitor] Thread1 First part over
+T=50000 [Scoreboard] PASS! Mismatch addr=0x9 data=0x5f addr_a=0x9 data_a=0x5f
+T = 50000 [Generator] Loop : 3/20 creat next item
+T=50000 Driver addr=0xd data=0xba addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=70000 [Monitor] Thread1 Second part over
+T=70000 Monitor_Thread1 addr=0xe data=0xe8 addr_a=0xe data_a=0xe8 addr_b=0x0 data_b=0x0
+T=70000 [Driver] waiting for item ...
+T=70000 [Monitor] Thread0 First part over
+T=70000 [Scoreboard] PASS! Mismatch addr=0xe data=0xe8 addr_a=0xe data_a=0xe8
+T = 70000 [Generator] Loop : 4/20 creat next item
+T=70000 Driver addr=0xc data=0x4c addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=90000 [Monitor] Thread0 Second part over
+T=90000 Monitor_Thread0 addr=0xd data=0xba addr_a=0xd data_a=0xba addr_b=0x0 data_b=0x0
+T=90000 [Driver] waiting for item ...
+T=90000 [Monitor] Thread1 First part over
+T=90000 [Scoreboard] PASS! Mismatch addr=0xd data=0xba addr_a=0xd data_a=0xba
+T = 90000 [Generator] Loop : 5/20 creat next item
+T=90000 Driver addr=0xd data=0xb2 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=110000 [Monitor] Thread1 Second part over
+T=110000 Monitor_Thread1 addr=0xc data=0x4c addr_a=0xc data_a=0x4c addr_b=0x0 data_b=0x0
+T=110000 [Driver] waiting for item ...
+T=110000 [Monitor] Thread0 First part over
+T=110000 [Scoreboard] PASS! Mismatch addr=0xc data=0x4c addr_a=0xc data_a=0x4c
+T = 110000 [Generator] Loop : 6/20 creat next item
+T=110000 Driver addr=0x3 data=0xbe addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=130000 [Monitor] Thread0 Second part over
+T=130000 Monitor_Thread0 addr=0xd data=0xb2 addr_a=0xd data_a=0xb2 addr_b=0x0 data_b=0x0
+T=130000 [Driver] waiting for item ...
+T=130000 [Monitor] Thread1 First part over
+T=130000 [Scoreboard] PASS! Mismatch addr=0xd data=0xb2 addr_a=0xd data_a=0xb2
+T = 130000 [Generator] Loop : 7/20 creat next item
+T=130000 Driver addr=0xa data=0x33 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=150000 [Monitor] Thread1 Second part over
+T=150000 Monitor_Thread1 addr=0x3 data=0xbe addr_a=0x3 data_a=0xbe addr_b=0x0 data_b=0x0
+T=150000 [Driver] waiting for item ...
+T=150000 [Monitor] Thread0 First part over
+T=150000 [Scoreboard] PASS! Mismatch addr=0x3 data=0xbe addr_a=0x3 data_a=0xbe
+T = 150000 [Generator] Loop : 8/20 creat next item
+T=150000 Driver addr=0xb data=0xf7 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=170000 [Monitor] Thread0 Second part over
+T=170000 Monitor_Thread0 addr=0xa data=0x33 addr_a=0xa data_a=0x33 addr_b=0x0 data_b=0x0
+T=170000 [Driver] waiting for item ...
+T=170000 [Monitor] Thread1 First part over
+T=170000 [Scoreboard] PASS! Mismatch addr=0xa data=0x33 addr_a=0xa data_a=0x33
+T = 170000 [Generator] Loop : 9/20 creat next item
+T=170000 Driver addr=0x7 data=0xcb addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=190000 [Monitor] Thread1 Second part over
+T=190000 Monitor_Thread1 addr=0xb data=0xf7 addr_a=0xb data_a=0xf7 addr_b=0x0 data_b=0x0
+T=190000 [Driver] waiting for item ...
+T=190000 [Monitor] Thread0 First part over
+T=190000 [Scoreboard] PASS! Mismatch addr=0xb data=0xf7 addr_a=0xb data_a=0xf7
+T = 190000 [Generator] Loop : 10/20 creat next item
+T=190000 Driver addr=0x6 data=0x1b addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=210000 [Monitor] Thread0 Second part over
+T=210000 Monitor_Thread0 addr=0x7 data=0xcb addr_a=0x7 data_a=0xcb addr_b=0x0 data_b=0x0
+T=210000 [Driver] waiting for item ...
+T=210000 [Monitor] Thread1 First part over
+T=210000 [Scoreboard] PASS! Mismatch addr=0x7 data=0xcb addr_a=0x7 data_a=0xcb
+T = 210000 [Generator] Loop : 11/20 creat next item
+T=210000 Driver addr=0xf data=0x18 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=230000 [Monitor] Thread1 Second part over
+T=230000 Monitor_Thread1 addr=0x6 data=0x1b addr_a=0x6 data_a=0x1b addr_b=0x0 data_b=0x0
+T=230000 [Driver] waiting for item ...
+T=230000 [Monitor] Thread0 First part over
+T=230000 [Scoreboard] PASS! Mismatch addr=0x6 data=0x1b addr_a=0x6 data_a=0x1b
+T = 230000 [Generator] Loop : 12/20 creat next item
+T=230000 Driver addr=0x7 data=0x39 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=250000 [Monitor] Thread0 Second part over
+T=250000 Monitor_Thread0 addr=0xf data=0x18 addr_a=0xf data_a=0x18 addr_b=0x0 data_b=0x0
+T=250000 [Driver] waiting for item ...
+T=250000 [Monitor] Thread1 First part over
+T=250000 [Scoreboard] PASS! Mismatch addr=0xf data=0x18 addr_a=0xf data_a=0x18
+T = 250000 [Generator] Loop : 13/20 creat next item
+T=250000 Driver addr=0xc data=0x6a addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=270000 [Monitor] Thread1 Second part over
+T=270000 Monitor_Thread1 addr=0x7 data=0x39 addr_a=0x7 data_a=0x39 addr_b=0x0 data_b=0x0
+T=270000 [Driver] waiting for item ...
+T=270000 [Monitor] Thread0 First part over
+T=270000 [Scoreboard] PASS! Mismatch addr=0x7 data=0x39 addr_a=0x7 data_a=0x39
+T = 270000 [Generator] Loop : 14/20 creat next item
+T=270000 Driver addr=0x5 data=0xd5 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=290000 [Monitor] Thread0 Second part over
+T=290000 Monitor_Thread0 addr=0xc data=0x6a addr_a=0xc data_a=0x6a addr_b=0x0 data_b=0x0
+T=290000 [Driver] waiting for item ...
+T=290000 [Monitor] Thread1 First part over
+T=290000 [Scoreboard] PASS! Mismatch addr=0xc data=0x6a addr_a=0xc data_a=0x6a
+T = 290000 [Generator] Loop : 15/20 creat next item
+T=290000 Driver addr=0xf data=0x4f addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=310000 [Monitor] Thread1 Second part over
+T=310000 Monitor_Thread1 addr=0x5 data=0xd5 addr_a=0x5 data_a=0xd5 addr_b=0x0 data_b=0x0
+T=310000 [Driver] waiting for item ...
+T=310000 [Monitor] Thread0 First part over
+T=310000 [Scoreboard] PASS! Mismatch addr=0x5 data=0xd5 addr_a=0x5 data_a=0xd5
+T = 310000 [Generator] Loop : 16/20 creat next item
+T=310000 Driver addr=0x4 data=0xb5 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=330000 [Monitor] Thread0 Second part over
+T=330000 Monitor_Thread0 addr=0xf data=0x4f addr_a=0xf data_a=0x4f addr_b=0x0 data_b=0x0
+T=330000 [Driver] waiting for item ...
+T=330000 [Monitor] Thread1 First part over
+T=330000 [Scoreboard] PASS! Mismatch addr=0xf data=0x4f addr_a=0xf data_a=0x4f
+T = 330000 [Generator] Loop : 17/20 creat next item
+T=330000 Driver addr=0xf data=0xc6 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=350000 [Monitor] Thread1 Second part over
+T=350000 Monitor_Thread1 addr=0x4 data=0xb5 addr_a=0x4 data_a=0xb5 addr_b=0x0 data_b=0x0
+T=350000 [Driver] waiting for item ...
+T=350000 [Monitor] Thread0 First part over
+T=350000 [Scoreboard] PASS! Mismatch addr=0x4 data=0xb5 addr_a=0x4 data_a=0xb5
+T = 350000 [Generator] Loop : 18/20 creat next item
+T=350000 Driver addr=0x8 data=0x3d addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=370000 [Monitor] Thread0 Second part over
+T=370000 Monitor_Thread0 addr=0xf data=0xc6 addr_a=0xf data_a=0xc6 addr_b=0x0 data_b=0x0
+T=370000 [Driver] waiting for item ...
+T=370000 [Monitor] Thread1 First part over
+T=370000 [Scoreboard] PASS! Mismatch addr=0xf data=0xc6 addr_a=0xf data_a=0xc6
+T = 370000 [Generator] Loop : 19/20 creat next item
+T=370000 Driver addr=0x4 data=0xd4 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=390000 [Monitor] Thread1 Second part over
+T=390000 Monitor_Thread1 addr=0x8 data=0x3d addr_a=0x8 data_a=0x3d addr_b=0x0 data_b=0x0
+T=390000 [Driver] waiting for item ...
+T=390000 [Monitor] Thread0 First part over
+T=390000 [Scoreboard] PASS! Mismatch addr=0x8 data=0x3d addr_a=0x8 data_a=0x3d
+T = 390000 [Generator] Loop : 20/20 creat next item
+T=390000 Driver addr=0x7 data=0x31 addr_a=0x0 data_a=0x0 addr_b=0x0 data_b=0x0
+T=410000 [Monitor] Thread0 Second part over
+T=410000 Monitor_Thread0 addr=0x4 data=0xd4 addr_a=0x4 data_a=0xd4 addr_b=0x0 data_b=0x0
+T=410000 [Driver] waiting for item ...
+T=410000 [Monitor] Thread1 First part over
+T=410000 [Scoreboard] PASS! Mismatch addr=0x4 data=0xd4 addr_a=0x4 data_a=0xd4
+T = 410000 [Generator] Done generation of 20 items
+T=430000 [Monitor] Thread1 Second part over
+T=430000 Monitor_Thread1 addr=0x7 data=0x31 addr_a=0x7 data_a=0x31 addr_b=0x0 data_b=0x0
+T=430000 [Scoreboard] PASS! Mismatch addr=0x7 data=0x31 addr_a=0x7 data_a=0x31
+$finish called from file "../../tcase/TC-001.sv", line 84.
+$finish at simulation time               460000
+
+---------------------------------------------------------------------------
+VCS Coverage Metrics: during simulation line, cond, FSM, branch, tgl was monitored
+---------------------------------------------------------------------------
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 460000 ps
+CPU Time:      1.360 seconds;       Data structure size:   0.0Mb
+Tue Oct  7 10:07:43 2025

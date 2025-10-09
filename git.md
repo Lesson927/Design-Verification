@@ -1,3 +1,4 @@
+![011500266295799](https://github.com/user-attachments/assets/aa2a3d55-f0c2-469d-a7e5-72c1888187fc)
 git init                                                  # 初始化本地git仓库（创建新仓库）  
 git config --global user.name "xxx"                       # 配置用户名  
 git config --global user.email "xxx@xxx.com"              # 配置邮件  

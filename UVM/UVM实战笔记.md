@@ -152,3 +152,107 @@ uvm_config_db#(int)::set(this, "env.i_agt.drv", "pre_num", 100);
 uvm_config_db#(int)::get(this, "", "pre_num", pre_num);  
 第一个和第二个参数联合起来组成目标路径，第三个参数表示一个记号，用以说明这个值是传给目标中的哪个成员的，第四个参数是要设置的值/变量  
 check_config_usage();  
+# 第四章 UVM中的TLM1.0通信
+## TLM(Transaction Level Modeling)1.0
+<img width="1003" height="667" alt="image" src="https://github.com/user-attachments/assets/59ada241-9b15-4a73-8db0-fa9f7738390c" />  
+<img width="1021" height="380" alt="image" src="https://github.com/user-attachments/assets/ba93ed26-cbc0-449b-9fb8-11ca036fe341" />  
+UVM中常用的PORT：
+```
+uvm_blocking_put_port#(T);
+uvm_nonblocking_put_port#(T);
+uvm_put_port#(T);
+uvm_blocking_get_port#(T);
+uvm_nonblocking_get_port#(T);
+uvm_get_port#(T);
+uvm_blocking_peek_port#(T);
+uvm_nonblocking_peek_port#(T);
+uvm_peek_port#(T);
+uvm_blocking_get_peek_port#(T);
+uvm_nonblocking_get_peek_port#(T);
+uvm_get_peek_port#(T);
+uvm_blocking_transport_port#(REQ, RSP);
+uvm_nonblocking_transport_port#(REQ, RSP);
+uvm_transport_port#(REQ, RSP);
+```
+UVM中常用的EXPORT：  
+```
+uvm_blocking_put_export#(T);
+uvm_nonblocking_put_export#(T);
+uvm_put_export#(T);
+uvm_blocking_get_export#(T);
+uvm_nonblocking_get_export#(T);
+uvm_get_export#(T);
+uvm_blocking_peek_export#(T);
+uvm_nonblocking_peek_export#(T);
+uvm_peek_export#(T);
+uvm_blocking_get_peek_export#(T);
+uvm_nonblocking_get_peek_export#(T);
+uvm_get_peek_export#(T);
+uvm_blocking_transport_export#(REQ, RSP);
+uvm_nonblocking_transport_export#(REQ, RSP);
+uvm_transport_export#(REQ, RSP);
+```
+**PORT和EXPORT体现的是一种控制流，在这种控制流中，PORT具有高优先级，而EXPORT具有低优先级。只有高优先级的端口才能向低优先级的端口发起三种操作。**  
+## UVM中各种端口的互连
+### PORT与EXPORT
+```
+function void my_env::connect_phase(uvm_phase phase);
+super.connect_phase(phase);
+A_inst.A_port.connect(B_inst.B_export);
+endfunction
+```
+### IMP
+UVM中的IMP：  
+```
+uvm_blocking_put_imp#(T, IMP);
+uvm_nonblocking_put_imp#(T, IMP);
+uvm_put_imp#(T, IMP);
+uvm_blocking_get_imp#(T, IMP);
+uvm_nonblocking_get_imp#(T, IMP);
+uvm_get_imp#(T, IMP);
+uvm_blocking_peek_imp#(T, IMP);
+uvm_nonblocking_peek_imp#(T, IMP);
+uvm_peek_imp#(T, IMP);
+uvm_blocking_get_peek_imp#(T, IMP);
+uvm_nonblocking_get_peek_imp#(T, IMP);
+uvm_get_peek_imp#(T, IMP);
+uvm_blocking_transport_imp#(REQ, RSP, IMP);
+uvm_nonblocking_transport_imp#(REQ, RSP, IMP);
+uvm_transport_imp#(REQ, RSP, IMP);
+```
+<img width="916" height="730" alt="image" src="https://github.com/user-attachments/assets/f69436a8-79c2-4db8-a4a7-2d0b26d65c73" />  
+### PORT与IMP的连接
+PORT > EXPORT > IMP  
+<img width="980" height="347" alt="image" src="https://github.com/user-attachments/assets/4adbad5a-ffe2-4af3-8e0f-d48bc0652975" />  
+### EXPORT与IMP的连接
+和PORT与IMP连接几乎一致
+### PORT与PORT的连接
+C_inst.C_port.connect(this.A_port);
+### EXPORT和EXPORT连接
+this.C_export.connect(B_inst.B_export);  
+### blocking_get端口的使用
+<img width="931" height="384" alt="image" src="https://github.com/user-attachments/assets/30e317d0-1f7c-4a7c-8d47-a6f18fae7232" />  
+搞清楚谁是动作发起者谁是动作接收者，IMP伴随动作接收者。  
+### blocking_transport端口的使用
+<img width="910" height="335" alt="image" src="https://github.com/user-attachments/assets/7d590aa2-d4f8-4e5d-82e7-e56099ce38f1" />  
+### noblocking端口的使用
+nonblocking端口的所有操作都是非阻塞的，换言之，必须用函数实现，而不能用任务实现。
+blocking是可以等待值的到来，符合task中时序规定；noblocking是不用等待值的到来，在值到来之前可以去干别的事情。所以需要立即返回一个值（状态）。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

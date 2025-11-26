@@ -1,4 +1,5 @@
 # 第三章 UVM基础
+
 ## 与uvm_object相关的宏
 uvm_object_utils：它用于把一个直接或间接派生自uvm_object的类注册到factory中。  
 uvm_object_param_utils：它用于把一个直接或间接派生自uvm_object的参数化的类注册到factory中。
@@ -63,6 +64,7 @@ get_children(ref uvm_component children[$]):得到所有child
 `define uvm_field_aa_string_int(ARG, FLAG)
 `define uvm_field_aa_object_int(ARG, FLAG)
 ```
+
 ### field automation机制的常用函数  
 copy函数用于实例的复制  
 compare函数用于比较两个实例是否一样  
@@ -78,6 +80,7 @@ clone函数
 `uvm_field_int(crc_err, UVM_ALL_ON | UVM_NOPACK)  
 除了UVM_NOPACK之后，还有UVM_NOCOMPARE、UVM_NOPRINT、UVM_NORECORD、UVM_NOCOPY等选项，分别对应compare、print、record、copy等功能。  
 ### field automation中宏与if的结合
+
 ```
 `uvm_object_utils_begin(my_transaction)
 `uvm_field_int(dmac, UVM_ALL_ON)
@@ -94,6 +97,7 @@ end
 `uvm_field_int(is_vlan, UVM_ALL_ON | UVM_NOPACK)
 `uvm_object_utils_end
 ```
+
 ## UVM中打印信息的控制
 ### 设置打印信息的冗余度阈值
 set_report_verbosity_level():  env.i_agt.drv.set_report_verbosity_level(UVM_HIGH);  
@@ -135,6 +139,7 @@ env.i_agt.drv.set_report_severity_action(UVM_INFO, UVM_DISPLAY| UVM_LOG);
 env.i_agt.drv.set_report_id_file("my_drv", drv_log);  
 env.i_agt.drv.set_report_id_action("my_drv", UVM_DISPLAY| UVM_LOG);  
 ### 控制打印信息的行为
+
 ```
 typedef enum
 {
@@ -147,6 +152,7 @@ UVM_CALL_HOOK = 'b010000,
 UVM_STOP = 'b100000
 } uvm_action_type;
 ```
+
 ## config_db机制
 uvm_config_db#(int)::set(this, "env.i_agt.drv", "pre_num", 100);  
 uvm_config_db#(int)::get(this, "", "pre_num", pre_num);  
@@ -154,8 +160,10 @@ uvm_config_db#(int)::get(this, "", "pre_num", pre_num);
 check_config_usage();  
 # 第四章 UVM中的TLM1.0通信
 ## TLM(Transaction Level Modeling)1.0
+
 <img width="1003" height="667" alt="image" src="https://github.com/user-attachments/assets/59ada241-9b15-4a73-8db0-fa9f7738390c" />  
 <img width="1021" height="380" alt="image" src="https://github.com/user-attachments/assets/ba93ed26-cbc0-449b-9fb8-11ca036fe341" />  
+
 UVM中常用的PORT：
 ```
 uvm_blocking_put_port#(T);
@@ -195,12 +203,14 @@ uvm_transport_export#(REQ, RSP);
 **PORT和EXPORT体现的是一种控制流，在这种控制流中，PORT具有高优先级，而EXPORT具有低优先级。只有高优先级的端口才能向低优先级的端口发起三种操作。**  
 ## UVM中各种端口的互连
 ### PORT与EXPORT
+
 ```
 function void my_env::connect_phase(uvm_phase phase);
 super.connect_phase(phase);
 A_inst.A_port.connect(B_inst.B_export);
 endfunction
 ```
+
 ### IMP
 UVM中的IMP：  
 ```
@@ -221,9 +231,11 @@ uvm_nonblocking_transport_imp#(REQ, RSP, IMP);
 uvm_transport_imp#(REQ, RSP, IMP);
 ```
 <img width="916" height="730" alt="image" src="https://github.com/user-attachments/assets/f69436a8-79c2-4db8-a4a7-2d0b26d65c73" />  
+
 ### PORT与IMP的连接
 PORT > EXPORT > IMP  
 <img width="980" height="347" alt="image" src="https://github.com/user-attachments/assets/4adbad5a-ffe2-4af3-8e0f-d48bc0652975" />  
+
 ### EXPORT与IMP的连接
 和PORT与IMP连接几乎一致
 ### PORT与PORT的连接
@@ -235,6 +247,7 @@ this.C_export.connect(B_inst.B_export);
 搞清楚谁是动作发起者谁是动作接收者，IMP伴随动作接收者。  
 ### blocking_transport端口的使用
 <img width="910" height="335" alt="image" src="https://github.com/user-attachments/assets/7d590aa2-d4f8-4e5d-82e7-e56099ce38f1" />  
+
 ### noblocking端口的使用
 nonblocking端口的所有操作都是非阻塞的，换言之，必须用函数实现，而不能用任务实现。
 blocking是可以等待值的到来，符合task中时序规定；noblocking是不用等待值的到来，在值到来之前可以去干别的事情。所以需要立即返回一个值（状态）。
@@ -244,6 +257,7 @@ blocking是可以等待值的到来，符合task中时序规定；noblocking是�
 一个analysis_port可以和多个IMP相连接进行通信，但是IMP的类型必须是uvm_analysis_imp，否则会报错。  
 对于analysis_port和analysis_export来说，只有一种操作：write。在analysis_imp所在的component，必须定义一个名字为write的函数。  
 <img width="903" height="508" alt="image" src="https://github.com/user-attachments/assets/d554afb7-2233-4c1b-910c-ac13ee8310bb" />  
+
 ### 一个component内有多个IMP
 ```
 class my_agent extends uvm_agent ;
@@ -259,7 +273,8 @@ o_agt.ap.connect(scb.scb_imp);
 …
 endfunction
 ```
-### 使用FIFO通信
+
+### 使用FIFO通信  
 <img width="983" height="673" alt="image" src="https://github.com/user-attachments/assets/b0ffe279-3138-42e4-8af6-4f18e2d2b602" />  
 
 ### FIFO上的端口及调试
@@ -269,8 +284,10 @@ is_empty函数：用于判断当前FIFO缓存是否为空。
 is_full函数：用于判断当前FIFO缓存是否为满。
 flush函数：用于清空FIFO缓存中的所有数据，一般用于复位操作。 
 ### 用FIFO还是用IMP
-各有优劣  
-# 第五章 UVM验证平台的运行
+各有优劣
+
+# 第五章 UVM验证平台的运行 
+
 
 
 

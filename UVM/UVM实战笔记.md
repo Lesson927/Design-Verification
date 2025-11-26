@@ -244,11 +244,33 @@ blocking是可以等待值的到来，符合task中时序规定；noblocking是�
 一个analysis_port可以和多个IMP相连接进行通信，但是IMP的类型必须是uvm_analysis_imp，否则会报错。  
 对于analysis_port和analysis_export来说，只有一种操作：write。在analysis_imp所在的component，必须定义一个名字为write的函数。  
 <img width="903" height="508" alt="image" src="https://github.com/user-attachments/assets/d554afb7-2233-4c1b-910c-ac13ee8310bb" />  
+### 一个component内有多个IMP
+```
+class my_agent extends uvm_agent ;
+uvm_analysis_port #(my_transaction) ap;
+…
+function void my_agent::connect_phase(uvm_phase phase);
+ap = mon.ap;
+…
+endfunction
+endclass
+function void my_env::connect_phase(uvm_phase phase);
+o_agt.ap.connect(scb.scb_imp);
+…
+endfunction
+```
+### 使用FIFO通信
+<img width="983" height="673" alt="image" src="https://github.com/user-attachments/assets/b0ffe279-3138-42e4-8af6-4f18e2d2b602" />  
 
-
-
-
-
+### FIFO上的端口及调试
+<img width="986" height="472" alt="image" src="https://github.com/user-attachments/assets/6e6dfa59-40ae-424d-b8b4-8d2cb5a5dd20" />  
+used函数：用于查询FIFO缓存中有多少transaction。  
+is_empty函数：用于判断当前FIFO缓存是否为空。  
+is_full函数：用于判断当前FIFO缓存是否为满。
+flush函数：用于清空FIFO缓存中的所有数据，一般用于复位操作。 
+### 用FIFO还是用IMP
+各有优劣
+# 第五章 UVM验证平台的运行
 
 
 

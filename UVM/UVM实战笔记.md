@@ -358,6 +358,23 @@ phase对应一个drain_time，并不是所有的phase共享一个drain_time。�
 <sim command> +UVM_OBJECTION_TRACE  
 ## domain的应用
 
-
+# 第六章 UVM中的sequence
+## sequence基础
+UVM为了解决设置和修改不同sequence问题，引入了sequence机制，在解决的过程中还使用了factory机制、config机制。使用sequence机制之后，在不同的测试用例中，将不同的sequence设置成sequencer的main_phase的default_sequence。当sequencer执行到main_phase时，发现有default_sequence，那么它就启动sequence。  
+### sequence的启动与执行
+直接启动：  
+```
+my_sequence my_seq;
+my_seq = my_sequence::type_id::create("my_seq");
+my_seq.start(sequencer);
+```
+default_sequence启动:  
+```
+uvm_config_db#(uvm_object_wrapper)::set(this,
+"env.i_agt.sqr.main_phase",
+"default_sequence",
+case0_sequence::type_id::get());
+```
+当一个sequence启动后会自动执行sequence的body任务。其实，除了body外，还会自动调用sequence的pre_body与post_body  
 
 

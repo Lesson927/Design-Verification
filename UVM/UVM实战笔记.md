@@ -287,17 +287,76 @@ flush函数：用于清空FIFO缓存中的所有数据，一般用于复位操�
 各有优劣
 
 # 第五章 UVM验证平台的运行 
-
-
-
-
-
-
-
-
-
-
-
+## phase机制
+function phase:build_phase、connect_phase等，这些phase都不耗费仿真时间，通过函数来实现  
+task phase:如run_phase等，它们耗费仿真时间，通过任务来实现。给DUT施加激励、监测DUT的输出都是在这些phase中完成的。  
+<img width="993" height="545" alt="image" src="https://github.com/user-attachments/assets/d2951c55-f849-4791-bf66-629d9247a3b9" />  
+### 动态运行phase
+在reset_phase对DUT进行复位、初始化等操作，在configure_phase则进行DUT的配置，DUT的运行主要在main_phase完成，shutdown_phase则是做一些与DUT断电相关的操作。  
+### phase的执行顺序
+build_phase:自上而下  
+function phase:自下而上  
+task phase:自下而上(并行)  
+### UVM树的遍历
+深度优先
+### super.phase的内容
+除build_phase外，在写其他phase时，完全可以不必加上super.xxxx_phase语句，如第2章中所有的super.main_phase都可以去掉。当然，这个结论只适用于直接扩展自uvm_component的类。如果是扩展自用户自定义的类，如base_test类，且在其某个phase，如connect_phase中定义了一些重要内容，那么在具体测试用例的connect_phase中就不应该省略super.connect_phase。  
+### build阶段出现UVM_ERROR停止仿真
+### phase的跳转
+跳转中最难的地方在于跳转前后的清理和准备工作。如上面的运行结果中的警告信息就是因为没有及时对objection进行清理。对于scoreboard来说，这个问题可能尤其严重。在跳转前，scoreboard的expect_queue中的数据应该清空，同时要容忍跳转后DUT可能输出一些异常数据。  
+jump函数：function void uvm_phase::jump(uvm_phase phase);  
+jump函数的参数必须是一个uvm_phase类型的变量。在UVM中，这样的变量共有如下几个：  
+```
+uvm_build_phase::get();
+uvm_connect_phase::get();
+uvm_end_of_elaboration_phase::get();
+uvm_start_of_simulation_phase::get();
+uvm_run_phase::get();
+uvm_pre_reset_phase::get();
+uvm_reset_phase::get();
+uvm_post_reset_phase::get();
+uvm_pre_configure_phase::get();
+uvm_configure_phase::get();
+uvm_post_configure_phase::get();
+uvm_pre_main_phase::get();
+uvm_main_phase::get();
+uvm_post_main_phase::get();
+uvm_pre_shutdown_phase::get();
+uvm_shutdown_phase::get();
+uvm_post_shutdown_phase::get();
+uvm_extract_phase::get();
+uvm_check_phase::get();
+uvm_report_phase::get();
+uvm_final_phase::get();
+```
+uvm_pre_reset_phase：：get（）后的所有phase都可以作为jump的参数。
+### phase的调试
+<sim command> +UVM_PHASE_TRACE  
+**超时退出**  
+在UVM中通过uvm_root的set_timeout函数可以设置超时时间：  
+uvm_top.set_timeout(500ns, 0);  
+<sim command> +UVM_TIMEOUT=<timeout>,<overridable>
+## objection机制
+### objection和task phase
+run_phase和12个动态运行的phase的objection机制，简单来说，run_phase独立于12个phase但是又是并行运行，12个phase中的objection控制着run_phase的运行时间，run_phase只能被动接受，反之，run_phase中的objection机制并不能影响12个phase的运行时间。  
+先依次消灭12个phase中的objection，最后消灭run_phase的objection。  
+### 参数phase的必要性
+### 控制objection的最佳选择
+一般来说，在一个实际的验证平台中，通常会在以下两种objection的控制策略中选择一种：  
+第一种是在scoreboard中进行控制（fork...join_any）。  
+第二种，如在第2章中介绍的例子那样，在sequence中提起sequencer的objection，当sequence完成后，再撤销此objection。  
+### set_drain_time的使用
+```
+task base_test::main_phase(uvm_phase phase);
+  phase.phase_done.set_drain_time(this, 200);
+endtask
+```
+drain_time属于uvm_objection的一个特性。如果只在main_phase中调用set_drain_time函数设置drain_time，但是在其他phase，如
+configure_phase中没有设置，那么在configure_phase中所有的objection被撤销后，会立即进入post_configure_phase。换言之，一个
+phase对应一个drain_time，并不是所有的phase共享一个drain_time。在没有设置的情况下，drain_time的默认值为0。  
+### objection的调试
+<sim command> +UVM_OBJECTION_TRACE  
+## domain的应用
 
 
 

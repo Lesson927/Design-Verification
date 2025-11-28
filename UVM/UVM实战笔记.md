@@ -376,5 +376,179 @@ uvm_config_db#(uvm_object_wrapper)::set(this,
 case0_sequence::type_id::get());
 ```
 当一个sequence启动后会自动执行sequence的body任务。其实，除了body外，还会自动调用sequence的pre_body与post_body  
+## sequence的仲裁机制
+### 在同一个sequencer上启动多个sequence
+用fork join并行启动多个sequence  
+可以通过uvm_do_pri及uvm_do_pri_with改变所产生的transaction的优先级  
+```
+`uvm_do_pri(m_trans, 100)
+`uvm_do_pri_with(m_trans, 200, {m_trans.pload.size < 500;})
+```
+要使优先级仲裁起作用需要设置sequencer的仲裁算法：  
+```
+env.i_agt.sqr.set_arbitration(SEQ_ARB_STRICT_FIFO);
+```
+除transaction有优先级外，sequence也有优先级的概念  
+```
+fork
+  seq0.start(env.i_agt.sqr, null, 100);
+  seq1.start(env.i_agt.sqr, null, 200);
+join
+```
+### sequencer的lock操作
+所谓lock，就是sequence向sequencer发送一个请求，这个请求与其他sequence发送transaction的请求一同被放入sequencer的仲裁队列中。当其前面的所有请求被处理完毕后，sequencer就开始响应这个lock请求，此后sequencer会一直连续发送此sequence的transaction，直到unlock操作被调用。  
+```
+virtual task body();
+…
+  repeat (3) begin
+  `uvm_do_with(m_trans, {m_trans.pload.size < 500;})
+  `uvm_info("sequence1", "send one transaction", UVM_MEDIUM)
+  end
+  lock();
+  `uvm_info("sequence1", "locked the sequencer ", UVM_MEDIUM)
+  repeat (4) begin
+  `uvm_do_with(m_trans, {m_trans.pload.size < 500;})
+  `uvm_info("sequence1", "send one transaction", UVM_MEDIUM)
+  end
+  `uvm_info("sequence1", "unlocked the sequencer ", UVM_MEDIUM)
+  unlock();
+  repeat (3) begin
+  `uvm_do_with(m_trans, {m_trans.pload.size < 500;})
+  `uvm_info("sequence1", "send one transaction", UVM_MEDIUM)
+end
+…
+54 endtask
+```
+### sequence的grab操作
+与lock操作一样，grab操作也用于暂时拥有sequencer的所有权，只是grab操作比lock操作优先级更高。lock请求是被插入sequencer仲裁队列的最后面，等到它时，它前面的仲裁请求都已经结束了。grab请求则被放入sequencer仲裁队列的最前面，它几乎是一发出就拥有了sequencer的所有权  
+可以这么说，lock是老弱病残用户，有序的优先权；grab是VIP用户，文明的占据。😄  
+grab();和ungrab();
+### sequence的有效性
+sequencer在仲裁时，会查看sequence的is_relevant函数的返回结果。如果为1，说明此sequence有效，否则无效。  
+除了is_relevant外，sequence中还有一个任务wait_for_relevant也与sequence的有效性相关：  
+若全部的transaction都发送完毕。此时，没有可发送的transaction,sequencer发现sequence0无效，会调用其wait_for_relevant。也就是说，失效是自己控制，但是重新变得有效需要等其他transaction发完才行，如果其他transaction永远不结束那么sequence0将永远处于无效状态。
+is_relevant与wait_for_relevant一般应成对重载，不能只重载其中的一个。  
+wait_for_relevant是一种保护机制，如果自己的控制没有准确控制，那么出现没有transaction可发送的情况，触发保护机制。  
+## sequence相关宏及其实现
+### uvm_do系列宏
+8个：  
+```
+`uvm_do(SEQ_OR_ITEM)o
+`uvm_do_pri(SEQ_OR_ITEM, PRIORITY)
+`uvm_do_with(SEQ_OR_ITEM, CONSTRAINTS)
+`uvm_do_pri_with(SEQ_OR_ITEM, PRIORITY, CONSTRAINTS)
+`uvm_do_on(SEQ_OR_ITEM, SEQR)
+`uvm_do_on_pri(SEQ_OR_ITEM, SEQR, PRIORITY)
+`uvm_do_on_with(SEQ_OR_ITEM, SEQR, CONSTRAINTS)
+`uvm_do_on_pri_with(SEQ_OR_ITEM, SEQR, PRIORITY, CONSTRAINTS)
+```
+uvm_do_on:用于显式地指定使用哪个sequencer发送此transaction。它有两个参数，第一个是transaction的指针，第二个是sequencer的指针。  
+```
+`uvm_do_on_pri_with(tr, this, 100, {tr.pload.size == 100;})
+```
+uvm_do系列的其他七个宏其实都是用uvm_do_on_pri_with宏来实现的。  
+### uvm_create与uvm_send
+```
+virtual task body();
+  int num = 0;
+  int p_sz;
+…
+  repeat (10) begin
+  num++;
+  `uvm_create(m_trans)
+  assert(m_trans.randomize());
+  p_sz = m_trans.pload.size();
+  {m_trans.pload[p_sz - 4],
+   m_trans.pload[p_sz - 3],
+   m_trans.pload[p_sz - 2],
+   m_trans.pload[p_sz - 1]}
+   = num;
+  `uvm_send(m_trans)
+  end
+…
+  endtask
+```
+uvm_send_pri:在将transaction交给sequencer时设定优先级  
+### uvm_rand_send系列宏
+```
+`uvm_rand_send(SEQ_OR_ITEM)
+`uvm_rand_send_pri(SEQ_OR_ITEM, PRIORITY)
+`uvm_rand_send_with(SEQ_OR_ITEM, CONSTRAINTS)
+`uvm_rand_send_pri_with(SEQ_OR_ITEM, PRIORITY, CONSTRAINTS)
+```
+uvm_rand_send宏与uvm_send宏类似，唯一的区别是它会对transaction进行随机化。这个宏使用的前提是transaction已经被分配了空间，换言之，即已经实例化了。  
+```
+m_trans = new("m_trans");
+`uvm_rand_send_pri_with(m_trans, 100, {m_trans.pload.size == 100;})
+```
+### start_item与finish_item
+```
+virtual task body();
+…
+  repeat (10) begin
+  tr = new("tr");
+  start_item(tr,100); //第二个参数为优先级
+  assert(tr.randomize() with {tr.pload.size == 200;});
+  finish_item(tr,100);
+  end
+…
+endtask
+```
+### pre_do、mid_do与post_do
+```
+sequencer.wait_for_grant(prior)   (task) \ start_item  \
+parent_seq.pre_do(1)              (task) /              \
+                                                    `uvm_do* macros
+parent_seq.mid_do(item)           (func) \              /
+sequencer.send_request(item)      (func)  \finish_item /
+sequencer.wait_for_item_done()    (task)  /
+parent_seq.post_do(item)          (func) /
+```
+## sequence的进阶应用
+### 嵌套的sequence
+```
+class case0_sequence extends uvm_sequence #(my_transaction);
+…
+  virtual task body();
+    crc_seq cseq; //声明一个
+    long_seq lseq;
+…
+    repeat (10) begin
+    `uvm_do(cseq)  //包含实例化new
+    `uvm_do(lseq)
+  end
+…
+  endtask
+…
+endclass
+```
+### 在sequence中使用rand类型变量
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

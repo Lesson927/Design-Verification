@@ -523,9 +523,76 @@ class case0_sequence extends uvm_sequence #(my_transaction);
 endclass
 ```
 ### 在sequence中使用rand类型变量
+在sequence中定义rand类型变量以向产生的transaction传递约束时，变量名字一定要与transaction中相应字段的名字不同。
+### transaction类型的匹配
+一个sequencer产生不同类型的transaction  
+```
+class case0_sequence extends uvm_sequence;
+  my_transaction m_trans;
+  your_transaction y_trans;
+…
+  virtual task body();
+…
+    repeat (10) begin
+      `uvm_do(m_trans)
+      `uvm_do(y_trans)
+    end
+…
+  endtask
 
+  `uvm_object_utils(case0_sequence)
+endclass
+```
+带给driver的选择问题就是必须用cast转换：
+```
+task my_driver::main_phase(uvm_phase phase);
+  my_transaction m_tr;
+  your_transaction y_tr;
+…
+  while(1) begin
+    seq_item_port.get_next_item(req);
+    if($cast(m_tr, req)) begin
+    drive_my_transaction(m_tr);
+    `uvm_info("driver", "receive a transaction whose type is my_transaction",UVM_MEDIUM)
+    end
+    else if($cast(y_tr, req)) begin
+    drive_your_transaction(y_tr);
+    `uvm_info("driver", "receive a transaction whose type is your_transaction", UVM_MEDIUM)
+    end
+    else begin
+    `uvm_error("driver", "receive a transaction whose type is unknown")
+    end
+    seq_item_port.item_done();
+    end
+endtask
+```
+**OK，需要总结一下，几个“多个不同”如何使用**  
+1.一个sequencer,多个sequence,同一种transaction，需要使用仲裁机制相关的宏根据优先级来决定。以及相关的lock,grab，有效性等操作，主要是针对sequence之间的顺序问题。  
+2.一个sequencer,一个sequence,不同的transaction,需要对driver进行cast操作分辨不同的transaction,主要针对一个sequence里面的数据类型。  
 
+### p_sequencer的使用
+m_sequencer是uvm_sequencer_base（uvm_sequencer的基类）类型的，而不是
+my_sequencer类型的。  
+uvm_declare_p_sequencer（SEQUENCER）。这个宏的本质是声明了一个SEQUENCER类型的成员变量，如在定义sequence时，使用此宏声明sequencer的类型  
 
+### sequence的派生与继承
+base_sequence可以将很多公用的函数或者任务写在base_sequence中。  
+
+## virtual sequence的使用
+### 带双路输入输出端口的DUT
+声明两个env,并且两组input_if和output_if  
+### sequence之间的简单同步
+使用全局事件  
+### sequence之间的复杂同步
+**使用virtual sequence**  
+有点复杂后面写。。。  
+
+### 仅在virtual sequence中控制objection
+除了手工启动sequence时为starting_phase赋值外，只有将此sequence作为sequencer的某动态运行phase的default_sequence时，其starting_phase才不为null。如果将某sequence作为uvm_do宏的参数，那么此sequence中的starting_phase是为null的。在此sequence中使用starting_phase.raise_objection是没有任何用处的。  
+换言之，要使starting_phase才不为null有效，要么在default_sequence中启动sequence，如果sequencer很多要用virtual sequence统一启动，那么这个starting_phase会无效，我们应该
+在最顶层的virtual sequence中控制objection。  
+
+### 在sequence中慎用fork join_none
 
 
 

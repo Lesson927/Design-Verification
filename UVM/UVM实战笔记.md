@@ -585,6 +585,8 @@ base_sequence可以将很多公用的函数或者任务写在base_sequence中。
 使用全局事件  
 ### sequence之间的复杂同步
 **使用virtual sequence**  
+<img width="1101" height="756" alt="image" src="https://github.com/user-attachments/assets/6c926c67-7a95-409d-a9ae-9b79a99de2a0" />  
+
 有点复杂后面写。。。  
 
 ### 仅在virtual sequence中控制objection

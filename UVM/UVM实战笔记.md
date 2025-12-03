@@ -586,8 +586,53 @@ base_sequence可以将很多公用的函数或者任务写在base_sequence中。
 ### sequence之间的复杂同步
 **使用virtual sequence**  
 <img width="1101" height="756" alt="image" src="https://github.com/user-attachments/assets/6c926c67-7a95-409d-a9ae-9b79a99de2a0" />  
+```
+class my_vsqr extends uvm_sequencer;
+  my_sequencer p_sqr0;
+  my_sequencer p_sqr1;
+…
+endclass
 
-有点复杂后面写。。。  
+class base_test extends uvm_test;
+
+  my_env env0;
+  my_env env1;
+  my_vsqr v_sqr;
+…
+endclass
+
+function void base_test::build_phase(uvm_phase phase);
+  super.build_phase(phase);
+  env0 = my_env::type_id::create("env0", this);
+  env1 = my_env::type_id::create("env1", this);
+  v_sqr = my_vsqr::type_id::create("v_sqr", this);
+endfunction
+
+function void base_test::connect_phase(uvm_phase phase);
+  v_sqr.p_sqr0 = env0.i_agt.sqr;
+  v_sqr.p_sqr1 = env1.i_agt.sqr;
+endfunction
+
+class case0_vseq extends uvm_sequence;
+  `uvm_object_utils(case0_vseq)
+  `uvm_declare_p_sequencer(my_vsqr)
+…
+  virtual task body();
+  my_transaction tr;
+  drv0_seq seq0;
+  drv1_seq seq1;
+…
+  `uvm_do_on_with(tr, p_sequencer.p_sqr0, {tr.pload.size == 1500;})
+  `uvm_info("vseq", "send one longest packet on p_sequencer.p_sqr0", UVM_MEDIUM)
+  fork
+  `uvm_do_on(seq0, p_sequencer.p_sqr0);
+  `uvm_do_on(seq1, p_sequencer.p_sqr1);
+  join
+…
+  endtask
+endclass
+```
+  
 
 ### 仅在virtual sequence中控制objection
 除了手工启动sequence时为starting_phase赋值外，只有将此sequence作为sequencer的某动态运行phase的default_sequence时，其starting_phase才不为null。如果将某sequence作为uvm_do宏的参数，那么此sequence中的starting_phase是为null的。在此sequence中使用starting_phase.raise_objection是没有任何用处的。  
@@ -596,17 +641,82 @@ base_sequence可以将很多公用的函数或者任务写在base_sequence中。
 
 ### 在sequence中慎用fork join_none
 
+## 在sequence中使用config_db
+
+### 获取参数
+```
+uvm_config_db#(int)::set(this, "env.i_agt.sqr.*", "count", 9);
+
+uvm_config_db#(int)::get(null, get_full_name(), "count", count)
+```
+### 设置参数
+```
+uvm_config_db#(bit)::set(uvm_root::get(), "uvm_test_top.env0.scb", "cmp_en", 0);
+```
+
+### wait_modified的使用
+UVM中提供了wait_modified任务，它的参数有三个，与config_db：：get的前三个参数完
+全一样。当它检测到第三个参数的值被更新过后，它就返回，否则一直等待在那里。  
+```
+fork
+  while(1) begin
+  uvm_config_db#(bit)::wait_modified(this, "", "cmp_en");
+  void'(uvm_config_db#(bit)::get(this, "", "cmp_en", cmp_en));
+  `uvm_info("my_scoreboard", $sformatf("cmp_en value modified, the new value is %0d", cmp_en),
+  end
+join
+```
+## response的使用
+
+### put_response和get_response
+```
+virtual task body();
+…
+  repeat (10) begin
+    `uvm_do(m_trans)
+    get_response(rsp);
+    `uvm_info("seq", "get one response", UVM_MEDIUM)
+    rsp.print();
+  end
+…
+endtask
 
 
+task my_driver::main_phase(uvm_phase phase);
+…
+  while(1) begin
+  seq_item_port.get_next_item(req);
+  drive_one_pkt(req);
+  rsp = new("rsp");
+  rsp.set_id_info(req);
+  seq_item_port.put_response(rsp);
+  seq_item_port.item_done();
+  end
+endtask
+```
+除了使用put_response外，UVM还支持直接将response作为item_done的参数
+```
+seq_item_port.item_done(rsp);
+```
+### response handler与另类的response
 
+### rsp与req类型不同
 
+## sequence library
+### 随机选择sequence
+```
+class simple_seq_library extends uvm_sequence_library#(my_transaction);
+  function new(string name= "simple_seq_library");
+    super.new(name);
+    init_sequence_library();
+  endfunction
 
+  `uvm_object_utils(simple_seq_library)
+  `uvm_sequence_library_utils(simple_seq_library);
 
-
-
-
-
-
+endclass
+```
+在定义sequence library时有三点要特别注意：一是从uvm_sequence派生时要指明此sequence library所产生的transaction类型，这点与普通的sequence相同；二是在其new函数中要调用init_sequence_library，否则其内部的候选sequence队列就是空的；三是要调用uvm_sequence_library_utils注册。  
 
 
 

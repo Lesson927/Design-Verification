@@ -717,6 +717,122 @@ class simple_seq_library extends uvm_sequence_library#(my_transaction);
 endclass
 ```
 在定义sequence library时有三点要特别注意：一是从uvm_sequence派生时要指明此sequence library所产生的transaction类型，这点与普通的sequence相同；二是在其new函数中要调用init_sequence_library，否则其内部的候选sequence队列就是空的；三是要调用uvm_sequence_library_utils注册。  
+一个sequence在定义时使用宏uvm_add_to_seq_lib来将其加入某个sequence library中：  
+```
+class seq0 extends uvm_sequence#(my_transaction);
+…
+  `uvm_object_utils(seq0)
+  `uvm_add_to_seq_lib(seq0, simple_seq_library)
+  virtual task body();
+    repeat(10) begin
+      `uvm_do(req)
+      `uvm_info("seq0", "this is seq0", UVM_MEDIUM)
+    end
+  endtask
+endclass
+```
+一个sequence可以加入多个不同的sequence library中：  
+```
+`uvm_add_to_seq_lib(seq0, simple_seq_library)
+`uvm_add_to_seq_lib(seq0, hard_seq_library)
+```
+当sequence与sequence library定义好后，可以将sequence library作为sequencer的default sequence  
+```
+function void my_case0::build_phase(uvm_phase phase);
+  super.build_phase(phase);
+
+  uvm_config_db#(uvm_object_wrapper)::set(this,
+                                    "env.i_agt.sqr.main_phase",
+                                    "default_sequence",
+                                    simple_seq_library::type_id::get());
+endfunction
+```
+### 控制选择算法
+sequence library随机从其sequence队列中选择几个执行。这是由其变量selection_mode决定的
+uvm_sequence_lib_mode selection_mode;  
+```
+typedef enum
+{
+UVM_SEQ_LIB_RAND,
+UVM_SEQ_LIB_RANDC,
+UVM_SEQ_LIB_ITEM,
+UVM_SEQ_LIB_USER
+} uvm_sequence_lib_mode;
+```
+修改UVM_SEQ_LIB_RAND为UVM_SEQ_LIB_RANDC  
+```
+function void my_case0::build_phase(uvm_phase phase);
+…
+  uvm_config_db#(uvm_sequence_lib_mode)::set(this,
+                                    "env.i_agt.sqr.main_phase",
+                                    "default_sequence.selection_mode",
+                                    UVM_SEQ_LIB_RANDC);
+endfunction
+```
+### 控制执行次数
+```
+uvm_config_db#(int unsigned)::set(this,
+  "env.i_agt.sqr.main_phase",
+  "default_sequence.min_random_count",
+  5);
+uvm_config_db#(int unsigned)::set(this,
+  "env.i_agt.sqr.main_phase",
+  "default_sequence.max_random_count",
+  20);
+```
+### 使用sequence_library_cfg
+sequence_library_cfg  
+```
+class uvm_sequence_library_cfg extends uvm_object;
+  `uvm_object_utils(uvm_sequence_library_cfg)
+  uvm_sequence_lib_mode selection_mode;
+  int unsigned min_random_count;
+  int unsigned max_random_count;
+…
+endclass
+```
+eg.  
+```
+function void my_case0::build_phase(uvm_phase phase);
+  uvm_sequence_library_cfg cfg;
+  super.build_phase(phase);
+  cfg = new("cfg", UVM_SEQ_LIB_RANDC, 5, 20);
+
+  uvm_config_db#(uvm_object_wrapper)::set(this,
+                                  "env.i_agt.sqr.main_phase",
+                                  "default_sequence",
+                                  simple_seq_library::type_id::get());
+uvm_config_db#(uvm_sequence_library_cfg)::set(this,
+                                  "env.i_agt.sqr.main_phase",
+                                  "default_sequence.config",
+                                  cfg);
+endfunction
+```
+简单的配置方法--实例化后赋值  
+```
+function void my_case0::build_phase(uvm_phase phase);
+  simple_seq_library seq_lib;
+  super.build_phase(phase);
+
+  seq_lib = new("seq_lib");
+  seq_lib.selection_mode = UVM_SEQ_LIB_RANDC;
+  seq_lib.min_random_count = 10;
+  seq_lib.max_random_count = 15;
+  uvm_config_db#(uvm_sequence_base)::set(this,
+                                  "env.i_agt.sqr.main_phase",
+                                  "default_sequence",
+                                  seq_lib);
+endfunction
+```
+**OK，我们来总结一下，不同sequence场景下的启动方式**  
+
+
+
+
+
+
+
+
 
 
 

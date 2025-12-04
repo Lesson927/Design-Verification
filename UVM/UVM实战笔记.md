@@ -879,6 +879,27 @@ config参数说明：
 |is_rand|是否可以随机化，当且仅当第四个参数为RW、WRC、WRS、WO、W1、WO1时才有效|
 |individually|是否可以单独存取|  
 
+```
+class reg_model extends uvm_reg_block;
+  rand reg_invert invert;
+
+  virtual function void build();
+    default_map = create_map("default_map", 0, 2, UVM_BIG_ENDIAN, 0);
+
+    invert = reg_invert::type_id::create("invert", , get_full_name());
+    invert.configure(this, null, "");
+    invert.build();
+    default_map.add_reg(invert, 'h9, "RW");
+  endfunction
+
+  `uvm_object_utils(reg_model)
+
+  function new(input string name="reg_model");
+    super.new(name, UVM_NO_COVERAGE);
+  endfunction
+
+endclass
+```
 
 
 
@@ -887,6 +908,105 @@ config参数说明：
 
 
 
+
+
+
+# 第八章 UVM中的factory机制
+## SystemVerilog对重载的支持
+### 任务与函数的重载
+当在父类中定义一个函数/任务时，如果将其设置为virtual类型，那么就可以在子类中重载这个函数/任务  
+```
+class bird extends uvm_object;
+  virtual function void hungry();
+    $display("I am a bird, I am hungry");
+  endfunction
+  function void hungry2();
+    $display("I am a bird, I am hungry2");
+  endfunction
+…
+endclass
+
+class parrot extends bird;
+  virtual function void hungry();
+    $display("I am a parrot, I am hungry");
+  endfunction
+  function void hungry2();
+    $display("I am a parrot, I am hungry2");
+  endfunction
+…
+endclass
+```
+```
+function void my_case0::print_hungry(bird b_ptr);
+  b_ptr.hungry();
+  b_ptr.hungry2();
+endfunction
+
+function void my_case0::build_phase(uvm_phase phase);
+  bird bird_inst;
+  parrot parrot_inst;
+  super.build_phase(phase);
+
+  bird_inst = bird::type_id::create("bird_inst");
+  parrot_inst = parrot::type_id::create("parrot_inst");
+  print_hungry(bird_inst);
+  print_hungry(parrot_inst);
+endfunction
+/////////////////////////////
+//"I am a bird, I am hungry"
+//"I am a bird, I am hungry2"
+/////////////////////////////
+//"I am a parrot, I am hungry"
+//"I am a bird, I am hungry2"
+/////////////////////////////
+```
+这种函数/任务重载的功能在UVM中得到了大量的应用。其实最典型的莫过于各个phase。当各个phase被调用时，以build_phase为例，实际上系统是使用如下的方式调用：  
+```
+c_ptr.build_phase();
+```
+这表示uvm_component基类中有build_phase()这个函数，在子类中不断地virtual,而super作用是调用父类的函数，所以调用最终以父类的函数原型实现自身子类的功能。  
+至于如何形成验证环境的树状结构，就需要依靠子类build_phase中的实例化操作指定父类了。  
+### 约束的重载
+在测试一个接收MAC功能的DUT时，有多种异常情况需要测试，如preamble错误、sfd错误、CRC错误等。针对这些错误，在transaction中分别加入标志位，然后在针对标志位编写函数。
+```
+uvm_do_with(tr, {tr.crc_err == 0; sfd_err == 0; pre_err == 0;})
+```
+每次产生transaction都要约束，比较麻烦。  
+两种方法：  
+1.定义错误为一种约束，通过控制约束的开关m_trans.crc_err_cons.constraint_mode(0)，然后使用\`uvm_rand_send_with宏去发送。  
+打开约束为正常发送，关闭约束为异常发送。（其中tr需要实例化，不然会报错）  
+2.约束重载，在基础transaction上派生一个新的transaction,然后直接用普通\`uvm_do宏启动  
+```
+class new_transaction extends my_transaction;
+    `uvm_object_utils(new_transaction)
+    function new(string name= "new_transaction");
+      super.new(name);
+    endfunction
+
+    constraint crc_err_cons{
+    crc_err dist {0 := 2, 1 := 1};
+    }
+endclass
+```
+## 使用factory机制进行重载
+### factory机制式的重载
+```
+function void my_case0::build_phase(uvm_phase phase);
+…
+  set_type_override_by_type(bird::get_type(), parrot::get_type());
+
+  bird_inst = bird::type_id::create("bird_inst");
+  parrot_inst = parrot::type_id::create("parrot_inst");
+  print_hungry(bird_inst);
+  print_hungry(parrot_inst);
+endfunction
+/////////////////////////////
+//"I am a parrot, I am hungry"
+//"I am a bird, I am hungry2"
+//"I am a parrot, I am hungry"
+//"I am a bird, I am hungry2"
+/////////////////////////////
+```
 
 
 

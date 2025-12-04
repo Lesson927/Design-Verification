@@ -825,12 +825,59 @@ function void my_case0::build_phase(uvm_phase phase);
 endfunction
 ```
 **OK，我们来总结一下，不同sequence场景下的启动方式**  
+|sequencer数量|sequence数量|启动方式|  
+|:---:|:---:|:---:|  
+|1|1|start直接启动,default_sequence启动|  
+|1|>1|start逐个启动，default_sequence逐个启动，virtual sequence，sequence library|
+|>1|>1|start启动，default_sequence启动，virtual sequence(指定好sequencer对应的参数)|  
 
+# 第七章 UVM中的寄存器模型
+## 寄存器模型简介
+DUT中除了input和output的reg,即中间变量  
+```
+task my_model::main_phase(uvm_phase phase);
+…
+reg_model.INVERT_REG.read(status, value, UVM_FRONTDOOR);
+…
+endtask
+```
+只能启动sequence通过前门（FRONTDOOR）访问的方式来读取寄存器，局限较大，在
+scoreboard（或者其他component）中难以控制。而有了寄存器模型之后，scoreboard只与寄存器模型打交道，无论是发送读的指令还是获取读操作的返回值，都可以由寄存器模型完成。有了寄存器模型后，可以在任何耗费时间的phase中使用寄存器模型以前门访问或后门（BACKDOOR）访问的方式来读取寄存器的值，同时还能在某些不耗费时间的phase（如check_phase）中使用后门访问的方式来读取寄存器的值。  
+|uvm_reg_field|uvm_reg|uvm_reg_block|uvm_reg_map|  
+|:---:|:---:|:---:|:---:|  
+|最小单位|小单位，比uvm_reg_field高一个级别，一个寄存器至少包含一个|大单位，可以加入uvm_reg或者uvm_reg_block。至少包含一个|存储寄存器地址，转换成可访问的物理地址（绝对地址）|  
+## 简单的寄存器模型
+```
+class reg_invert extends uvm_reg;
 
+  rand uvm_reg_field reg_data;
 
+  virtual function void build();
+    reg_data = uvm_reg_field::type_id::create("reg_data");
+    // parameter: parent, size, lsb_pos, access, volatile, reset value, has_reset, is_rand, individually
+    reg_data.configure(this, 1, 0, "RW", 1, 0, 1, 1, 0);
+  endfunction
 
+  `uvm_object_utils(reg_invert)
 
-
+  function new(input string name="reg_invert");
+    //parameter: name, size, has_coverage
+    super.new(name, 16, UVM_NO_COVERAGE);
+  endfunction
+endclass
+```
+config参数说明：  
+|||
+|:---:|:---:|
+|parent|此域的父辈|
+|size|宽度|
+|lsb_pos|最低位在整个寄存器的位置，0开始|
+|access|25种存取方式，RO、RW、RC、RS... 支持自定义|
+|volatitle|一般不使用，1|
+|reset value|上电复位后的默认值，例如复位低电平有效，这边就是0|
+|has_reset|是否有复位，一般有，1|
+|is_rand|是否可以随机化，当且仅当第四个参数为RW、WRC、WRS、WO、W1、WO1时才有效|
+|individually|是否可以单独存取|  
 
 
 

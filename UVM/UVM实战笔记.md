@@ -17,7 +17,7 @@ get_child():得到child
 get_children(ref uvm_component children[$]):得到所有child  
 使用get_first_child和get_next_child的组合依次得到所有的child  
 ## field automation机制
-```
+```systemverilog
 `define uvm_field_int(ARG,FLAG) 整数  
 `define uvm_field_real(ARG,FLAG) 实数  
 `define uvm_field_enum(T,ARG,FLAG) 枚举类型  
@@ -26,28 +26,28 @@ get_children(ref uvm_component children[$]):得到所有child
 `define uvm_field_string(ARG,FLAG) 字符串
 ```
 与动态数组有关的uvm_field系列宏有：  
-```
+```systemverilog
 `define uvm_field_array_enum(ARG,FLAG)
 `define uvm_field_array_int(ARG,FLAG)
 `define uvm_field_array_object(ARG,FLAG)
 `define uvm_field_array_string(ARG,FLAG)
 ```
 与静态数组相关的uvm_field系列宏有：  
-```
+```systemverilog
 `define uvm_field_sarray_int(ARG,FLAG)
 `define uvm_field_sarray_enum(ARG,FLAG)
 `define uvm_field_sarray_object(ARG,FLAG)
 `define uvm_field_sarray_string(ARG,FLAG)
 ```
 与队列相关的uvm_field系列宏有：  
-```
+```systemverilog
 `define uvm_field_queue_enum(ARG,FLAG)
 `define uvm_field_queue_int(ARG,FLAG)
 `define uvm_field_queue_object(ARG,FLAG)
 `define uvm_field_queue_string(ARG,FLAG)
 ```
 与联合数组相关的uvm_field宏有：  
-```
+```systemverilog
 `define uvm_field_aa_int_string(ARG, FLAG)
 `define uvm_field_aa_string_string(ARG, FLAG)
 `define uvm_field_aa_object_string(ARG, FLAG)
@@ -81,7 +81,7 @@ clone函数
 除了UVM_NOPACK之后，还有UVM_NOCOMPARE、UVM_NOPRINT、UVM_NORECORD、UVM_NOCOPY等选项，分别对应compare、print、record、copy等功能。  
 ### field automation中宏与if的结合
 
-```
+```systemverilog
 `uvm_object_utils_begin(my_transaction)
 `uvm_field_int(dmac, UVM_ALL_ON)
 `uvm_field_int(smac, UVM_ALL_ON)
@@ -140,7 +140,7 @@ env.i_agt.drv.set_report_id_file("my_drv", drv_log);
 env.i_agt.drv.set_report_id_action("my_drv", UVM_DISPLAY| UVM_LOG);  
 ### 控制打印信息的行为
 
-```
+```systemverilog
 typedef enum
 {
 UVM_NO_ACTION = 'b000000,
@@ -165,7 +165,7 @@ check_config_usage();
 <img width="1021" height="380" alt="image" src="https://github.com/user-attachments/assets/ba93ed26-cbc0-449b-9fb8-11ca036fe341" />  
 
 UVM中常用的PORT：
-```
+```systemverilog
 uvm_blocking_put_port#(T);
 uvm_nonblocking_put_port#(T);
 uvm_put_port#(T);
@@ -183,7 +183,7 @@ uvm_nonblocking_transport_port#(REQ, RSP);
 uvm_transport_port#(REQ, RSP);
 ```
 UVM中常用的EXPORT：  
-```
+```systemverilog
 uvm_blocking_put_export#(T);
 uvm_nonblocking_put_export#(T);
 uvm_put_export#(T);
@@ -204,7 +204,7 @@ uvm_transport_export#(REQ, RSP);
 ## UVM中各种端口的互连
 ### PORT与EXPORT
 
-```
+```systemverilog
 function void my_env::connect_phase(uvm_phase phase);
 super.connect_phase(phase);
 A_inst.A_port.connect(B_inst.B_export);
@@ -213,7 +213,7 @@ endfunction
 
 ### IMP
 UVM中的IMP：  
-```
+```systemverilog
 uvm_blocking_put_imp#(T, IMP);
 uvm_nonblocking_put_imp#(T, IMP);
 uvm_put_imp#(T, IMP);
@@ -259,7 +259,7 @@ blocking是可以等待值的到来，符合task中时序规定；noblocking是�
 <img width="903" height="508" alt="image" src="https://github.com/user-attachments/assets/d554afb7-2233-4c1b-910c-ac13ee8310bb" />  
 
 ### 一个component内有多个IMP
-```
+```systemverilog
 class my_agent extends uvm_agent ;
 uvm_analysis_port #(my_transaction) ap;
 …
@@ -306,7 +306,7 @@ task phase:自下而上(并行)
 跳转中最难的地方在于跳转前后的清理和准备工作。如上面的运行结果中的警告信息就是因为没有及时对objection进行清理。对于scoreboard来说，这个问题可能尤其严重。在跳转前，scoreboard的expect_queue中的数据应该清空，同时要容忍跳转后DUT可能输出一些异常数据。  
 jump函数：function void uvm_phase::jump(uvm_phase phase);  
 jump函数的参数必须是一个uvm_phase类型的变量。在UVM中，这样的变量共有如下几个：  
-```
+```systemverilog
 uvm_build_phase::get();
 uvm_connect_phase::get();
 uvm_end_of_elaboration_phase::get();
@@ -346,7 +346,7 @@ run_phase和12个动态运行的phase的objection机制，简单来说，run_pha
 第一种是在scoreboard中进行控制（fork...join_any）。  
 第二种，如在第2章中介绍的例子那样，在sequence中提起sequencer的objection，当sequence完成后，再撤销此objection。  
 ### set_drain_time的使用
-```
+```systemverilog
 task base_test::main_phase(uvm_phase phase);
   phase.phase_done.set_drain_time(this, 200);
 endtask
@@ -363,13 +363,13 @@ phase对应一个drain_time，并不是所有的phase共享一个drain_time。�
 UVM为了解决设置和修改不同sequence问题，引入了sequence机制，在解决的过程中还使用了factory机制、config机制。使用sequence机制之后，在不同的测试用例中，将不同的sequence设置成sequencer的main_phase的default_sequence。当sequencer执行到main_phase时，发现有default_sequence，那么它就启动sequence。  
 ### sequence的启动与执行
 直接启动：  
-```
+```systemverilog
 my_sequence my_seq;
 my_seq = my_sequence::type_id::create("my_seq");
 my_seq.start(sequencer);
 ```
 default_sequence启动:  
-```
+```systemverilog
 uvm_config_db#(uvm_object_wrapper)::set(this,
 "env.i_agt.sqr.main_phase",
 "default_sequence",
@@ -380,16 +380,16 @@ case0_sequence::type_id::get());
 ### 在同一个sequencer上启动多个sequence
 用fork join并行启动多个sequence  
 可以通过uvm_do_pri及uvm_do_pri_with改变所产生的transaction的优先级  
-```
+```systemverilog
 `uvm_do_pri(m_trans, 100)
 `uvm_do_pri_with(m_trans, 200, {m_trans.pload.size < 500;})
 ```
 要使优先级仲裁起作用需要设置sequencer的仲裁算法：  
-```
+```systemverilog
 env.i_agt.sqr.set_arbitration(SEQ_ARB_STRICT_FIFO);
 ```
 除transaction有优先级外，sequence也有优先级的概念  
-```
+```systemverilog
 fork
   seq0.start(env.i_agt.sqr, null, 100);
   seq1.start(env.i_agt.sqr, null, 200);
@@ -397,7 +397,7 @@ join
 ```
 ### sequencer的lock操作
 所谓lock，就是sequence向sequencer发送一个请求，这个请求与其他sequence发送transaction的请求一同被放入sequencer的仲裁队列中。当其前面的所有请求被处理完毕后，sequencer就开始响应这个lock请求，此后sequencer会一直连续发送此sequence的transaction，直到unlock操作被调用。  
-```
+```systemverilog
 virtual task body();
 …
   repeat (3) begin
@@ -432,7 +432,7 @@ wait_for_relevant是一种保护机制，如果自己的控制没有准确控制
 ## sequence相关宏及其实现
 ### uvm_do系列宏
 8个：  
-```
+```systemverilog
 `uvm_do(SEQ_OR_ITEM)o
 `uvm_do_pri(SEQ_OR_ITEM, PRIORITY)
 `uvm_do_with(SEQ_OR_ITEM, CONSTRAINTS)
@@ -443,12 +443,12 @@ wait_for_relevant是一种保护机制，如果自己的控制没有准确控制
 `uvm_do_on_pri_with(SEQ_OR_ITEM, SEQR, PRIORITY, CONSTRAINTS)
 ```
 uvm_do_on:用于显式地指定使用哪个sequencer发送此transaction。它有两个参数，第一个是transaction的指针，第二个是sequencer的指针。  
-```
+```systemverilog
 `uvm_do_on_pri_with(tr, this, 100, {tr.pload.size == 100;})
 ```
 uvm_do系列的其他七个宏其实都是用uvm_do_on_pri_with宏来实现的。  
 ### uvm_create与uvm_send
-```
+```systemverilog
 virtual task body();
   int num = 0;
   int p_sz;
@@ -470,19 +470,19 @@ virtual task body();
 ```
 uvm_send_pri:在将transaction交给sequencer时设定优先级  
 ### uvm_rand_send系列宏
-```
+```systemverilog
 `uvm_rand_send(SEQ_OR_ITEM)
 `uvm_rand_send_pri(SEQ_OR_ITEM, PRIORITY)
 `uvm_rand_send_with(SEQ_OR_ITEM, CONSTRAINTS)
 `uvm_rand_send_pri_with(SEQ_OR_ITEM, PRIORITY, CONSTRAINTS)
 ```
 uvm_rand_send宏与uvm_send宏类似，唯一的区别是它会对transaction进行随机化。这个宏使用的前提是transaction已经被分配了空间，换言之，即已经实例化了。  
-```
+```systemverilog
 m_trans = new("m_trans");
 `uvm_rand_send_pri_with(m_trans, 100, {m_trans.pload.size == 100;})
 ```
 ### start_item与finish_item
-```
+```systemverilog
 virtual task body();
 …
   repeat (10) begin
@@ -495,7 +495,7 @@ virtual task body();
 endtask
 ```
 ### pre_do、mid_do与post_do
-```
+```systemverilog
 sequencer.wait_for_grant(prior)   (task) \ start_item  \
 parent_seq.pre_do(1)              (task) /              \
                                                     `uvm_do* macros
@@ -506,7 +506,7 @@ parent_seq.post_do(item)          (func) /
 ```
 ## sequence的进阶应用
 ### 嵌套的sequence
-```
+```systemverilog
 class case0_sequence extends uvm_sequence #(my_transaction);
 …
   virtual task body();
@@ -526,7 +526,7 @@ endclass
 在sequence中定义rand类型变量以向产生的transaction传递约束时，变量名字一定要与transaction中相应字段的名字不同。
 ### transaction类型的匹配
 一个sequencer产生不同类型的transaction  
-```
+```systemverilog
 class case0_sequence extends uvm_sequence;
   my_transaction m_trans;
   your_transaction y_trans;
@@ -544,7 +544,7 @@ class case0_sequence extends uvm_sequence;
 endclass
 ```
 带给driver的选择问题就是必须用cast转换：
-```
+```systemverilog
 task my_driver::main_phase(uvm_phase phase);
   my_transaction m_tr;
   your_transaction y_tr;
@@ -586,7 +586,7 @@ base_sequence可以将很多公用的函数或者任务写在base_sequence中。
 ### sequence之间的复杂同步
 **使用virtual sequence**  
 <img width="1101" height="756" alt="image" src="https://github.com/user-attachments/assets/6c926c67-7a95-409d-a9ae-9b79a99de2a0" />  
-```
+```systemverilog
 class my_vsqr extends uvm_sequencer;
   my_sequencer p_sqr0;
   my_sequencer p_sqr1;
@@ -644,20 +644,20 @@ endclass
 ## 在sequence中使用config_db
 
 ### 获取参数
-```
+```systemverilog
 uvm_config_db#(int)::set(this, "env.i_agt.sqr.*", "count", 9);
 
 uvm_config_db#(int)::get(null, get_full_name(), "count", count)
 ```
 ### 设置参数
-```
+```systemverilog
 uvm_config_db#(bit)::set(uvm_root::get(), "uvm_test_top.env0.scb", "cmp_en", 0);
 ```
 
 ### wait_modified的使用
 UVM中提供了wait_modified任务，它的参数有三个，与config_db：：get的前三个参数完
 全一样。当它检测到第三个参数的值被更新过后，它就返回，否则一直等待在那里。  
-```
+```systemverilog
 fork
   while(1) begin
   uvm_config_db#(bit)::wait_modified(this, "", "cmp_en");
@@ -669,7 +669,7 @@ join
 ## response的使用
 
 ### put_response和get_response
-```
+```systemverilog
 virtual task body();
 …
   repeat (10) begin
@@ -695,7 +695,7 @@ task my_driver::main_phase(uvm_phase phase);
 endtask
 ```
 除了使用put_response外，UVM还支持直接将response作为item_done的参数
-```
+```systemverilog
 seq_item_port.item_done(rsp);
 ```
 ### response handler与另类的response
@@ -704,7 +704,7 @@ seq_item_port.item_done(rsp);
 
 ## sequence library
 ### 随机选择sequence
-```
+```systemverilog
 class simple_seq_library extends uvm_sequence_library#(my_transaction);
   function new(string name= "simple_seq_library");
     super.new(name);
@@ -720,7 +720,7 @@ endclass
 一个sequence在定义时使用宏uvm_add_to_seq_lib来将其加入某个sequence library中：  
 ```
 class seq0 extends uvm_sequence#(my_transaction);
-…
+…systemverilog
   `uvm_object_utils(seq0)
   `uvm_add_to_seq_lib(seq0, simple_seq_library)
   virtual task body();
@@ -737,7 +737,7 @@ endclass
 `uvm_add_to_seq_lib(seq0, hard_seq_library)
 ```
 当sequence与sequence library定义好后，可以将sequence library作为sequencer的default sequence  
-```
+```systemverilog
 function void my_case0::build_phase(uvm_phase phase);
   super.build_phase(phase);
 
@@ -750,7 +750,7 @@ endfunction
 ### 控制选择算法
 sequence library随机从其sequence队列中选择几个执行。这是由其变量selection_mode决定的
 uvm_sequence_lib_mode selection_mode;  
-```
+```systemverilog
 typedef enum
 {
 UVM_SEQ_LIB_RAND,
@@ -760,7 +760,7 @@ UVM_SEQ_LIB_USER
 } uvm_sequence_lib_mode;
 ```
 修改UVM_SEQ_LIB_RAND为UVM_SEQ_LIB_RANDC  
-```
+```systemverilog
 function void my_case0::build_phase(uvm_phase phase);
 …
   uvm_config_db#(uvm_sequence_lib_mode)::set(this,
@@ -770,7 +770,7 @@ function void my_case0::build_phase(uvm_phase phase);
 endfunction
 ```
 ### 控制执行次数
-```
+```systemverilog
 uvm_config_db#(int unsigned)::set(this,
   "env.i_agt.sqr.main_phase",
   "default_sequence.min_random_count",
@@ -782,7 +782,7 @@ uvm_config_db#(int unsigned)::set(this,
 ```
 ### 使用sequence_library_cfg
 sequence_library_cfg  
-```
+```systemverilog
 class uvm_sequence_library_cfg extends uvm_object;
   `uvm_object_utils(uvm_sequence_library_cfg)
   uvm_sequence_lib_mode selection_mode;
@@ -792,7 +792,7 @@ class uvm_sequence_library_cfg extends uvm_object;
 endclass
 ```
 eg.  
-```
+```systemverilog
 function void my_case0::build_phase(uvm_phase phase);
   uvm_sequence_library_cfg cfg;
   super.build_phase(phase);
@@ -809,7 +809,7 @@ uvm_config_db#(uvm_sequence_library_cfg)::set(this,
 endfunction
 ```
 简单的配置方法--实例化后赋值  
-```
+```systemverilog
 function void my_case0::build_phase(uvm_phase phase);
   simple_seq_library seq_lib;
   super.build_phase(phase);
@@ -834,7 +834,7 @@ endfunction
 # 第七章 UVM中的寄存器模型
 ## 寄存器模型简介
 DUT中除了input和output的reg,即中间变量  
-```
+```systemverilog
 task my_model::main_phase(uvm_phase phase);
 …
 reg_model.INVERT_REG.read(status, value, UVM_FRONTDOOR);
@@ -847,7 +847,7 @@ scoreboard（或者其他component）中难以控制。而有了寄存器模型�
 |:---:|:---:|:---:|:---:|  
 |最小单位|小单位，比uvm_reg_field高一个级别，一个寄存器至少包含一个|大单位，可以加入uvm_reg或者uvm_reg_block。至少包含一个|存储寄存器地址，转换成可访问的物理地址（绝对地址）|  
 ## 简单的寄存器模型
-```
+```systemverilog
 class reg_invert extends uvm_reg;
 
   rand uvm_reg_field reg_data;
@@ -879,7 +879,7 @@ config参数说明：
 |is_rand|是否可以随机化，当且仅当第四个参数为RW、WRC、WRS、WO、W1、WO1时才有效|
 |individually|是否可以单独存取|  
 
-```
+```systemverilog
 class reg_model extends uvm_reg_block;
   rand reg_invert invert;
 
@@ -915,7 +915,7 @@ endclass
 ## SystemVerilog对重载的支持
 ### 任务与函数的重载
 当在父类中定义一个函数/任务时，如果将其设置为virtual类型，那么就可以在子类中重载这个函数/任务  
-```
+```systemverilog
 class bird extends uvm_object;
   virtual function void hungry();
     $display("I am a bird, I am hungry");
@@ -936,7 +936,7 @@ class parrot extends bird;
 …
 endclass
 ```
-```
+```systemverilog
 function void my_case0::print_hungry(bird b_ptr);
   b_ptr.hungry();
   b_ptr.hungry2();
@@ -961,14 +961,14 @@ endfunction
 /////////////////////////////
 ```
 这种函数/任务重载的功能在UVM中得到了大量的应用。其实最典型的莫过于各个phase。当各个phase被调用时，以build_phase为例，实际上系统是使用如下的方式调用：  
-```
+```systemverilog
 c_ptr.build_phase();
 ```
 这表示uvm_component基类中有build_phase()这个函数，在子类中不断地virtual,而super作用是调用父类的函数，所以调用最终以父类的函数原型实现自身子类的功能。  
 至于如何形成验证环境的树状结构，就需要依靠子类build_phase中的实例化操作指定父类了。  
 ### 约束的重载
 在测试一个接收MAC功能的DUT时，有多种异常情况需要测试，如preamble错误、sfd错误、CRC错误等。针对这些错误，在transaction中分别加入标志位，然后在针对标志位编写函数。
-```
+```systemverilog
 uvm_do_with(tr, {tr.crc_err == 0; sfd_err == 0; pre_err == 0;})
 ```
 每次产生transaction都要约束，比较麻烦。  
@@ -976,7 +976,7 @@ uvm_do_with(tr, {tr.crc_err == 0; sfd_err == 0; pre_err == 0;})
 1.定义错误为一种约束，通过控制约束的开关m_trans.crc_err_cons.constraint_mode(0)，然后使用\`uvm_rand_send_with宏去发送。  
 打开约束为正常发送，关闭约束为异常发送。（其中tr需要实例化，不然会报错）  
 2.约束重载，在基础transaction上派生一个新的transaction,然后直接用普通\`uvm_do宏启动  
-```
+```systemverilog
 class new_transaction extends my_transaction;
     `uvm_object_utils(new_transaction)
     function new(string name= "new_transaction");
@@ -990,7 +990,7 @@ endclass
 ```
 ## 使用factory机制进行重载
 ### factory机制式的重载
-```
+```systemverilog
 function void my_case0::build_phase(uvm_phase phase);
 …
   set_type_override_by_type(bird::get_type(), parrot::get_type());
@@ -1007,6 +1007,68 @@ endfunction
 //"I am a bird, I am hungry2"
 /////////////////////////////
 ```
+为什么会导致以上的输出结果?🍋
+<img width="1115" height="746" alt="image" src="https://github.com/user-attachments/assets/15c93650-cab0-4acd-abce-910ace18e827" />  
+<img width="1129" height="753" alt="image" src="https://github.com/user-attachments/assets/b7d47403-b706-4caf-8dad-aea5371cb081" />  
+这是因为bird_inst使用了UVM的factory机制式的实例化方式：`bird_inst = bird::type_id::create("bird_inst");`  
+**当考虑此component需要重载时用这种方式实例化**
+在实例化时，UVM会通过factory机制在自己内部的一张表格中查看是否有相关的重载记录。`set_type_override_by_type`语句相当于在factory机制的表格中加入了一条记录。当查到有重载记录时，会使用新的类型来替代旧的类型。  
+使用factory机制的重载是有前提的，并不是任意的类都可以互相重载。要想使用重载的功能，必须满足以下要求：  
+1.无论是重载的类还是被重载的类，都要在定义时注册到factory机制中。  
+2.被重载的类在实例化时，要使用factory机制式的实例化方式，而不能使用传统的new方式。  
+3.最重要的是，重载的类要与被重载的类有派生关系。重载的类必须派生自被重载的类，被重载的类必须是重载类的父类。  
+4.component与object之间互相不能重载。虽然uvm_component是派生自uvm_object,但是这两者的血缘关系太远了，远到根本不能重载。从两者的new参数的函数就可以看出来，二者互相重载时，多出来的一个parent参数会使factory机制无所适从。  
+
+###重载的方式及种类
+`set_type_override_by_type(uvm_object_wrapper original_type, uvm_object_wrapper override_type, bit replace=1);  `
+只重载一部分：  
+`set_inst_override_by_type(string relative_inst_path, uvm_object_wrapper original_type, uvm_object_wrapper override_type);`
+无论是set_type_override_by_type还是set_inst_override_by_type，它们的参数都是一个uvm_object_wrapper型的类型参数，这种参数通过`xxx：：get_type（）`的形式获得。  
+另一种简单的写法  
+|set_type_override_by_type|set_type_override|
+|:---:|:---:|
+|set_inst_override_by_type|set_inst_override|  
+
+上面的四种函数都是uvm_component的函数，但是如果在一个无法使用component的地方，如top_tb的initial语句里，就无法使用。为此UVM提供了另外的四种函数。  
+
+|function|eg|
+|:---:|:---:|
+|set_type_override_by_type (uvm_object_wrapper original_type,uvm_object_wrapper override_type,bit replace=1);||
+|set_inst_override_by_type (uvm_object_wrapper original_type,uvm_object_wrapper override_type,string full_inst_path);||
+|set_type_override_by_name (string original_type_name,string override_type_name,bit replace=1);||
+|set_inst_override_by_name (string original_type_name,string override_type_name,string full_inst_path);||
+```systemverilog
+initial begin
+  factory.set_type_override_by_type(bird::get_type(), parrot::get_type()); //factory是全局变量
+end
+```
+命令行重载
+```
+<sim command> +uvm_set_inst_override=<req_type>,<override_type>,<full_inst_path>
+<sim command> +uvm_set_type_override=<req_type>,<override_type>[,<replace>]
+////////////////////////////////////////////////////////////////
+<sim command> +uvm_set_inst_override="my_monitor,new_monitor,uvm_test_top.env.o_agt.mon"
+/////////////////////////////////////////////////////////////////
+<sim command> +uvm_set_type_override="my_monitor,new_monitor"
+```
+### 复杂的重载
+1.连续重载，B重载A,C又重载B，A实例化最终是C。  
+2.替换重载，B重载A，C也重载A，按最新的重载记录，A实例化最终是C。  
+
+### factory机制的调试
+UVM提供了`print_override_info`函数来输出所有的打印信息  
+```systemverilog
+function void my_case0::connect_phase(uvm_phase phase);
+	super.connect_phase(phase);
+	env.o_agt.mon.print_override_info("my_monitor");
+endfunction
+```
+
+
+
+
+
+
 
 
 

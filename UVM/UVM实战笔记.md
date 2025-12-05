@@ -1019,7 +1019,7 @@ endfunction
 3.最重要的是，重载的类要与被重载的类有派生关系。重载的类必须派生自被重载的类，被重载的类必须是重载类的父类。  
 4.component与object之间互相不能重载。虽然uvm_component是派生自uvm_object,但是这两者的血缘关系太远了，远到根本不能重载。从两者的new参数的函数就可以看出来，二者互相重载时，多出来的一个parent参数会使factory机制无所适从。  
 
-###重载的方式及种类
+### 重载的方式及种类
 `set_type_override_by_type(uvm_object_wrapper original_type, uvm_object_wrapper override_type, bit replace=1);  `
 只重载一部分：  
 `set_inst_override_by_type(string relative_inst_path, uvm_object_wrapper original_type, uvm_object_wrapper override_type);`
@@ -1056,13 +1056,92 @@ end
 2.替换重载，B重载A，C也重载A，按最新的重载记录，A实例化最终是C。  
 
 ### factory机制的调试
-UVM提供了`print_override_info`函数来输出所有的打印信息  
+UVM提供了`print_override_info`和`debug_create_by_name`(全局变量factory)函数来输出所有的打印信息  
 ```systemverilog
 function void my_case0::connect_phase(uvm_phase phase);
 	super.connect_phase(phase);
 	env.o_agt.mon.print_override_info("my_monitor");
 endfunction
 ```
+```systemverilog
+factory.debug_create_by_type(my_monitor::get_type(), "uvm_test_top.env.o_agt.mon");
+```
+除了上述两个，还有`print`函数以及uvm_root的`print_topology`函数。值得一提的是，`print_topology`函数在build_phase之后调用来显示出整棵UVM树的拓扑结构。  
+
+## 常用的重载
+### 重载transaction
+原先的方式：创造一个新的err_transaction，然后一个新的sequence,最后default_sequence启动，而现在利用重载只需要：  
+```systemverilog
+function void my_case0::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+
+	factory.set_type_override_by_type(my_transaction::get_type(), crc_err_tr::get_type());
+	uvm_config_db#(uvm_object_wrapper)::set(this,
+									"env.i_agt.sqr.main_phase",
+									"default_sequence",
+									normal_sequence::type_id::get());
+endfunction
+```
+这样就不需要再额外生成一个新的sequence  
+
+### 重载sequence
+如果使用约束的重载，在sequence中通过`m_trans.crc_err_cons.constraint_mode(0);`控制,则同样在default_sequence之前重载sequence  
+```systemverilog
+function void my_case0::build_phase(uvm_phase phase);
+…
+	factory.set_type_override_by_type(normal_sequence::get_type(), abnorma l_sequence::get_type());
+	uvm_config_db#(uvm_object_wrapper)::set(this,
+							"env.i_agt.sqr.main_phase",
+							"default_sequence",
+							case_sequence::type_id::get());
+endfunction
+```
+### 重载component
+甚至可以重载driver达到产生错误测试用例的目的，这就是UVM!!!☑️☑️☑️  
+```systemverilog
+class crc_driver extends my_driver;
+…
+	virtual function void inject_crc_err(my_transaction tr);
+		tr.crc = $urandom_range(10000000, 0);
+	endfunction
+
+	virtual task main_phase(uvm_phase phase);
+		vif.data <= 8'b0;
+		vif.valid <= 1'b0;
+		while(!vif.rst_n)
+			@(posedge vif.clk);
+		while(1) begin
+			seq_item_port.get_next_item(req);
+			inject_crc_err(req);
+			drive_one_pkt(req);
+			seq_item_port.item_done();
+		end
+	endtask
+endclass
+```
+依旧是在my_case0(base_test)中重载
+```systemverilog
+factory.set_type_override_by_type(my_driver::get_type(), crc_driver::get_type());
+```
+**OK,让我们总结一下**  
+||transaction|sequence|driver|
+|:---:|:---:|:---:|:---:|
+|transaction重载|2(添加约束)|1|1|
+|sequence重载|1|2（关闭约束功能）|1|
+|driver重载|1|1|2（函数改tr数值）|
+
+## factory机制的实现
+从本质上来看，factory机制其实是对SystemVerilog中new函数的重载。因为这个原始的new函数实在是太简单了，功能太少了。经过factory机制的改良之后，进行实例化的方法多了很多。这也体现了UVM编写的一个原则，一个好的库应该提供更多方便实用的接口，这种接口一方面是库自己写出来并开放给用户的，另外一方面就是改良语言原始的接口，使得更加方便用户的使用。
+
+# 第九章 UVM中代码的可重用性
+
+
+
+
+
+
+
+
 
 
 

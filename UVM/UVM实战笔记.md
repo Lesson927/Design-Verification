@@ -900,6 +900,105 @@ class reg_model extends uvm_reg_block;
 
 endclass
 ```
+create_map有众多的
+参数，其中第一个参数是名字，第二个参数是基地址，第三个参数则是系统总线的宽度，这里的单位是byte而不是bit，第四个参数是大小端，最后一个参数表示是否能够按照byte寻址。  
+
+
+最后一步则是将此寄存器加入default_map中。uvm_reg_map的作用是存储所有寄存器的地址，因此必须将实例化的寄存器加入default_map中，否则无法进行前门访问操作。add_reg函数的第一个参数是要加入的寄存器，第二个参数是寄存器的地址，这里是16’h9，第三个参数是此寄存器的存取方式。
+
+### 在验证平台中使用寄存器模型
+```systemverilog
+`ifndef MY_MODEL__SV
+`define MY_MODEL__SV
+
+class my_model extends uvm_component;
+   
+   uvm_blocking_get_port #(my_transaction)  port;
+   uvm_analysis_port #(my_transaction)  ap;
+
+   reg_model p_rm;
+   extern function new(string name, uvm_component parent);
+   extern function void build_phase(uvm_phase phase);
+   extern virtual  task main_phase(uvm_phase phase);
+   extern virtual  function void invert_tr(my_transaction tr);
+
+   `uvm_component_utils(my_model)
+endclass 
+
+function my_model::new(string name, uvm_component parent);
+   super.new(name, parent);
+endfunction 
+
+function void my_model::build_phase(uvm_phase phase);
+   super.build_phase(phase);
+   port = new("port", this);
+   ap = new("ap", this);
+endfunction
+
+function void my_model::invert_tr(my_transaction tr);
+    tr.dmac = tr.dmac ^ 48'hFFFF_FFFF_FFFF;
+    tr.smac = tr.smac ^ 48'hFFFF_FFFF_FFFF;
+    tr.ether_type = tr.ether_type ^ 16'hFFFF;
+    tr.crc = tr.crc ^ 32'hFFFF_FFFF;
+    for(int i = 0; i < tr.pload.size; i++)
+      tr.pload[i] = tr.pload[i] ^ 8'hFF;
+endfunction
+
+task my_model::main_phase(uvm_phase phase);
+   my_transaction tr;
+   my_transaction new_tr;
+   uvm_status_e status;
+   uvm_reg_data_t value;
+   super.main_phase(phase);
+   p_rm.invert.read(status, value, UVM_FRONTDOOR); //读取值到value
+   while(1) begin
+      port.get(tr);
+      new_tr = new("new_tr");
+      new_tr.copy(tr);
+      //`uvm_info("my_model", "get one transaction, copy and print it:", UVM_LOW)
+      //new_tr.print();
+      if(value)
+         invert_tr(new_tr);
+      ap.write(new_tr);
+   end
+endtask
+`endif
+```
+
+```systemverilog
+extern virtual task read(output uvm_status_e status,
+						output uvm_reg_data_t value,
+						input uvm_path_e path = UVM_DEFAULT_PATH,
+						input uvm_reg_map map = null,
+						input uvm_sequence_base parent = null,
+						input int prior = -1,
+						input uvm_object extension = null,
+						input string fname = "",
+						input int lineno = 0);
+```
+```systemverilog
+extern virtual task write(output uvm_status_e status,
+						input uvm_reg_data_t value,
+						input uvm_path_e path = UVM_DEFAULT_PATH,
+						input uvm_reg_map map = null,
+						input uvm_sequence_base parent = null,
+						input int prior = -1,
+						input uvm_object extension = null,
+						input string fname = "",
+						input int lineno = 0);
+```
+
+## 后门访问与前门访问
+
+### 前门访问
+所谓前门访问操作就是通过寄存器配置总线（如APB协议、OCP协议、I2C协议等）来对DUT进行操作。无论在任何总线协议中，前门访问操作只有两种：读操作和写操作。  
+
+
+### 后门访问
+后门访问是与前门访问相对的操作，从广义上来说，所有不通过DUT的总线而对DUT内部的寄存器或者存储器进行存取的操作都是后门访问操作。所有后门访问操作都是不消耗仿真时间（即$time打印的时间）而只消耗运行时间的。这是后门访问操作的最大优势。  
+
+
+
 
 
 
@@ -1135,8 +1234,123 @@ factory.set_type_override_by_type(my_driver::get_type(), crc_driver::get_type())
 
 # 第九章 UVM中代码的可重用性
 
+## callback机制
 
+### 广义的callback机制
+UVM已经给用户提供了一些广义的callback函数/任务：pre_body和post_body，除此之外还有pre_do、mid_do和post_do。
 
+### callback机制的必要性
+在没有factory机制的重载功能之前，使用callback函数构建异常测试用例是最好的实现方式。
+
+### UVM中callback机制的原理
+不考虑使用factory机制的重载功能情况下，callback机制的原理是派生另一个类（非driver这种component）,然后重写派生类中的函数（如pre_tran（））。  
+
+### callback机制的使用
+
+定义类A：  
+```systemverilog
+class A extends uvm_callback;
+	virtual task pre_tran(my_driver drv, ref my_transaction tr);
+	endtask
+endclass
+```
+声明一个A_pool类：  
+```systemverilog
+typedef uvm_callbacks#(my_driver, A) A_pool;
+```
+将此pool声明为my_driver专用：
+```systemverilog
+typedef class A;
+
+class my_driver extends uvm_driver#(my_transaction);
+…
+	`uvm_component_utils(my_driver)
+	`uvm_register_cb(my_driver, A)
+…
+endclass
+```
+在my_driver的main_phase中调用pre_tran：  
+```systemverilog
+task my_driver::main_phase(uvm_phase phase);
+…
+	while(1) begin
+		seq_item_port.get_next_item(req);
+		`uvm_do_callbacks(my_driver, A, pre_tran(this, req))
+		drive_one_pkt(req);
+		seq_item_port.item_done();
+	end
+endtask
+```
+**以上是VIP开发者要做的事情，使用者需要做以下事情**  
+从A派生一个类：  
+```systemverilog
+class my_callback extends A;
+
+	virtual task pre_tran(my_driver drv, ref my_transaction tr);
+		`uvm_info("my_callback", "this is pre_tran task", UVM_MEDIUM)
+	endtask
+
+	`uvm_object_utils(my_callback)
+endclass
+```
+将my_callback实例化，并加入A_pool中：  
+```systemverilog
+function void my_case0::connect_phase(uvm_phase phase);
+	my_callback my_cb;
+	super.connect_phase(phase);
+
+	my_cb = my_callback::type_id::create("my_cb");
+	A_pool::add(env.i_agt.drv, my_cb);
+endfunction
+```
+本节的my_driver是自己写的，my_case0也是自己写的。完全不存在VIP与VIP使用者的情况。不过换个角度来说，可能有两个验证人员共同开发一个项目，一个负责搭建测试平台（testbench）及my_driver等的代码，另外一位负责创建测试用例。负责搭建测试平台的验证人员为搭建测试用例的人员留下了callback函数/任务接口。即使my_driver与测试用例都由同一个人来写，也是完全可以接受的。因为不同的测试用例肯定会引起不同的driver的行为。这些不同的行为差异可以在sequence中实现，也可以在driver中实现。在driver中实现时既可以用driver的factory机制重载，也可以使用本节所讲的callback机制。9.1.6节将探讨只使用callback机制来搭建所有测试用例的可能。
+
+### 子类继承父类的callback机制
+```systemverilog
+class new_driver extends my_driver;
+	`uvm_component_utils(new_driver)
+	`uvm_set_super_type(new_driver, my_driver)
+…
+endclass
+
+task new_driver::main_phase(uvm_phase phase);
+…
+	while(1) begin
+		seq_item_port.get_next_item(req);
+		`uvm_info("new_driver", "this is new driver", UVM_MEDIUM)
+		`uvm_do_callbacks(my_driver, A, pre_tran(this, req))
+		drive_one_pkt(req);
+		seq_item_port.item_done();
+	end
+endtask
+```
+
+### 使用callback函数/任务来实现所有的测试用例
+
+### callback机制、sequence机制、factory机制
+callback机制、sequence机制和factory机制并不是互斥的，三者都能分别实现同一目的。当这三者互相结合时，又会产生许多新的解决问题的方式。如果在建立验证平台和测试用例时，能够择优选择其中最简单的一种实现方式，那么搭建出来的验证平台一定是足够强大、足够简练的。实现同一事情有多种方式，为用户提供了多种选择，高扩展性是UVM取得成功的一个重要原因。  
+
+## 功能的模块化：小而美
+
+避免大量复制，使用继承。  
+放弃建造强大sequence的想法  
+
+## 参数化的类
+
+注册需要参数化注册。  
+interface中可用参数化。  
+config_db机制  
+sequence机制  
+
+## 模块级到芯片级的代码重用
+
+### 基于env的重用
+
+### 寄存器模型的重用
+
+### virtual sequence与virtual sequencer
+
+# 第十章 UVM高级应用
 
 
 

@@ -1352,6 +1352,65 @@ sequence机制
 
 # 第十章 UVM高级应用
 
+## interface
+
+添加函数和任务，可以用always和initial、assign语句，实例化其他interface  
+
+**可变时钟**：  
+要实现第一种可变的时钟(每个case时钟不一样)，可以使用config_db，在测试用例中设置时钟周期：  
+```systemverilog
+function void my_case0::build_phase(uvm_phase phase);
+…
+	uvm_config_db#(real)::set(this, "", "clk_half_period", 200.0);
+endfunction
+```
+```systemverilog
+initial begin
+	static real clk_half_period = 100.0;
+	clk = 0;
+	#1;
+	if(uvm_config_db#(real)::get(uvm_root::get(), "uvm_test_top", "clk_half_period", clk_half_period))
+		`uvm_info("top_tb", $sformatf("clk_half_period is %0f", clk_half_per iod), UVM_MEDIUM)
+	forever begin
+		#(clk_half_period*1.0ns) clk = ~clk;
+	end
+end
+```
+第二种（同一个case时钟有变化）：  
+wait_modified监控时钟参数的变化  
+第三种（component完全体）：  
+
+## layer sequence
+
+### layer sequence的示例
+端口连接两个sequencer,模仿driver在主sequencer中从次sequencer获取transaction数据。总之通过这种方式可以细致化创建想要的sequence。  
+
+### layer sequence与try_next_item
+
+### 错峰技术的使用
+
+## sequence的其他问题
+
+
+## DUT参数的随机化
+
+### 使用寄存器模型随机化参数
+
+
+### 使用单独的参数类
+
+## 聚合参数
+
+## config_db
+
+
+
+
+
+
+
+
+
 
 
 

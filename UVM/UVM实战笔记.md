@@ -907,6 +907,51 @@ create_map有众多的
 最后一步则是将此寄存器加入default_map中。uvm_reg_map的作用是存储所有寄存器的地址，因此必须将实例化的寄存器加入default_map中，否则无法进行前门访问操作。add_reg函数的第一个参数是要加入的寄存器，第二个参数是寄存器的地址，这里是16’h9，第三个参数是此寄存器的存取方式。
 
 ### 在验证平台中使用寄存器模型
+<img width="1077" height="696" alt="image" src="https://github.com/user-attachments/assets/416494d4-a0c5-407b-8afb-2e8923016e91" />  
+
+必须要有一个转换器adapter并且定义好两个函数reg2bus和bus2reg：  
+```systemverilog
+`ifndef MY_ADAPTER__SV 
+`define MY_ADAPTER__SV 
+class my_adapter extends uvm_reg_adapter;
+    string tID = get_type_name();
+
+    `uvm_object_utils(my_adapter)
+
+   function new(string name="my_adapter");
+      super.new(name);
+   endfunction : new
+
+   function uvm_sequence_item reg2bus(const ref uvm_reg_bus_op rw);
+      bus_transaction tr;
+      tr = new("tr"); 
+      tr.addr = rw.addr;
+      tr.bus_op = (rw.kind == UVM_READ) ? BUS_RD: BUS_WR;
+      if (tr.bus_op == BUS_WR)
+         tr.wr_data = rw.data; 
+      return tr;
+   endfunction : reg2bus
+
+   function void bus2reg(uvm_sequence_item bus_item, ref uvm_reg_bus_op rw);
+      bus_transaction tr;
+      if(!$cast(tr, bus_item)) begin
+         `uvm_fatal(tID,
+          "Provided bus_item is not of the correct type. Expecting bus_transaction")
+          return;
+      end
+      rw.kind = (tr.bus_op == BUS_RD) ? UVM_READ : UVM_WRITE;
+      rw.addr = tr.addr;
+      rw.byte_en = 'h3;
+      rw.data = (tr.bus_op == BUS_RD) ? tr.rd_data : tr.wr_data;
+      rw.status = UVM_IS_OK;
+   endfunction : bus2reg
+
+endclass : my_adapter
+`endif
+```
+
+
+
 ```systemverilog
 `ifndef MY_MODEL__SV
 `define MY_MODEL__SV
@@ -997,7 +1042,12 @@ extern virtual task write(output uvm_status_e status,
 ### 后门访问
 后门访问是与前门访问相对的操作，从广义上来说，所有不通过DUT的总线而对DUT内部的寄存器或者存储器进行存取的操作都是后门访问操作。所有后门访问操作都是不消耗仿真时间（即$time打印的时间）而只消耗运行时间的。这是后门访问操作的最大优势。  
 
+### 使用interface进行后门访问操作
 
+在interface中定义函数  
+
+### UVM中后面访问操作的实现：DPI+VPI
+**DPI-C**
 
 
 
@@ -1398,6 +1448,7 @@ wait_modified监控时钟参数的变化
 
 
 ### 使用单独的参数类
+针对DUT中需要随机化的参数建立一个dut_parm类，并在其中指定默认约束并定义函数write  
 
 ## 聚合参数
 

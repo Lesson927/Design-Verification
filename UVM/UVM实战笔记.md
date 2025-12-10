@@ -832,6 +832,7 @@ endfunction
 |>1|>1|start启动，default_sequence启动，virtual sequence(指定好sequencer对应的参数)|  
 
 # 第七章 UVM中的寄存器模型
+这里指的DUT参数指的是DUT内部的寄存器。
 ## 寄存器模型简介
 DUT中除了input和output的reg,即中间变量  
 ```systemverilog
@@ -1443,7 +1444,7 @@ wait_modified监控时钟参数的变化
 
 
 ## DUT参数的随机化
-
+这里指的DUT参数指的是DUT内部的寄存器参数，而不是parameter,parameter在编译时就需要确定，仿真阶段不可更改。
 ### 使用寄存器模型随机化参数
 
 

@@ -1452,6 +1452,46 @@ wait_modified监控时钟参数的变化
 针对DUT中需要随机化的参数建立一个dut_parm类，并在其中指定默认约束并定义函数write  
 
 ## 聚合参数
+UVM中的参数有两种一种是DUT内部的寄存器参数，还有一种是验证环境需要的参数（config_db）。
+
+验证环境的参数如果非常多的情况下，就需要将这些参数放进一个专门的类里面来实现：  
+```systemverilog
+class my_config extends uvm_object;
+	rand int var1;
+…
+	rand int var1000;
+	constraint default_cons{
+		var1 = 7;
+…
+		var1000 = 999;
+	}
+	`uvm_object_utils_begin(my_config)
+		`uvm_field_int(var1, UVM_ALL_ON)
+…
+		`uvm_field_int(var1000, UVM_ALL_ON)
+	`uvm_object_utils_end
+endclass
+```
+base_test中这么写：  
+```systemverilog
+classs base_test extends uvm_test;
+	my_config cfg;
+	function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+		cfg = my_config::type_id::create("cfg");
+		uvm_config_db#(my_config)::set(this, "env.i_agt.drv", "cfg", cfg);
+		uvm_config_db#(my_config)::set(this, "env.i_agt.mon", "cfg", cfg);
+…
+	endfunction
+endclass
+```
+在driver中就直接get并且使用其中的数值就行。  
+
+### 聚合参数的优势和问题
+聚合参数这个类可以放在virtual sequence中，这样，当sequence要动态地改变某个验证平台中的变量值，可以改变。
+
+
+问题：降低可重用性。agent级别重用时实例化聚合参数导致90%在env级别的参数多余。  
 
 ## config_db
 

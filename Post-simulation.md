@@ -22,14 +22,15 @@ Directory：选择网表文件的保存位置，例如项目目录下的 netlist
 ### 生成延时文件sdf
 在 Flow Navigator 中，点击 Run Implementation 以运行实现流程。  
 实现完成后，点击 Open Implemented Design 查看已实现的设计。  
-在菜单栏中，选择 Tools > Timing > Write SDF。  
+在菜单栏中，选择 Tools > Timing > Write SDF。（不一定有，没有就直接run impl_sim）  
 在弹出的对话框中，选择保存路径并指定文件名（例如 counter.sdf）。  
 点击 OK，Vivado 将生成一个标准延时文件（SDF 文件）。  
 
 ### Vivado 运行后仿真
 Run simulation  
 Run Post-Implementation simulation  
-通常来说后仿真脚本，网表，sdf在project.sim/sim1/impl/questa
+通常来说后仿真脚本，网表，sdf在project.sim/sim1/impl/questa  
+切换corner不需要重新implementation  
 
 ### 导出vivado自带的后仿真脚本
 点击 File > Export > Export Simulation

@@ -34,3 +34,9 @@ Run Post-Implementation simulation
 
 ### 导出vivado自带的后仿真脚本
 点击 File > Export > Export Simulation
+
+
+SDF 反标：在仿真工具（如 Synopsys VCS、Mentor Graphics ModelSim 或 Cadence Incisive）中将 SDF 文件加载到门级网表中。加载方式包括：  
+编译选项：例如在 VCS 中，使用 -sdf 选项指定 SDF 文件。  
+系统函数：在 Verilog 代码中使用 $sdf_annotate 函数，例如：  
+verilog initial begin $sdf_annotate("path/to/your.sdf", instance_name); end（在vivado导出的网表一般会自动加入这个函数）  

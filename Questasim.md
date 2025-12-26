@@ -90,4 +90,19 @@ clean:
 .PHONY: all compile elaborate simulate clean
 ```
 
+<img width="2542" height="746" alt="image" src="https://github.com/user-attachments/assets/99315b7d-db58-4b3a-b8da-68b95f7fbfab" />
+<img width="2530" height="1078" alt="image" src="https://github.com/user-attachments/assets/fe32a377-b607-4142-8189-33ce767a540f" />
+<img width="2560" height="649" alt="image" src="https://github.com/user-attachments/assets/905df3a6-96dc-4e47-a85c-62577b256d47" />
+<img width="2523" height="1154" alt="image" src="https://github.com/user-attachments/assets/472c1399-27ae-4795-af2b-b344de0abb57" />
+<img width="2551" height="138" alt="image" src="https://github.com/user-attachments/assets/7f15f534-30ee-4e77-9bf2-fc09239d45b4" />
+<img width="861" height="432" alt="image" src="https://github.com/user-attachments/assets/776b664f-da9b-4315-8eb4-f22585db668f" />
+<img width="1075" height="292" alt="image" src="https://github.com/user-attachments/assets/ab0b9f04-9e76-4522-bd68-456e5ab108a5" />
+
+
+
+
+
+
+
+
 

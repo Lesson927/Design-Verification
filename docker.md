@@ -1,0 +1,12 @@
+# Docker 使用
+ - `docker pull image` 下载镜像
+ - `docker pull image:number` 下载指定版本镜像
+ - `docker run -d --name name -v file -p port image` 后台命名运行容器指定文件开启端口
+ - `docker stop id/name` 停止容器
+ - `docker start name/id` 启动容器
+ - `docker restart name/id` 重启容器
+ - `docker rm -f name/id` 删除指定容器
+ - `docker ps -a` 查看容器
+ - `docker images` 查看镜像
+ - `docker rmi image` 删除镜像
+ - `docker exec -it name /bin/bash` 进入容器内部

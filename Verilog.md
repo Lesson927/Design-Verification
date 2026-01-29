@@ -15,6 +15,7 @@
 （5）一个always块只一个变量进行赋值  
 
 ## 状态机 FSM（Finite State Machine）
+**三段式** 
 ```verilog
 // vending-machine
 // 2 yuan for a bottle of drink
@@ -40,7 +41,7 @@ module  vending_machine_p3  (
     reg [2:0]            st_next ;
     reg [2:0]            st_cur ;
 
-    //(1) state transfer
+    //(1) state transfer 一段 转态转移操作
     always @(posedge clk or negedge rstn) begin
         if (!rstn) begin
             st_cur      <= 'b0 ;
@@ -50,7 +51,7 @@ module  vending_machine_p3  (
         end
     end
 
-    //(2) state switch, using block assignment for combination-logic
+    //(2) state switch, using block assignment for combination-logic    二段 状态判断与切换
     //all case items need to be displayed completely    
     always @(*) begin 
         //st_next = st_cur ;//如果条件选项考虑不全，可以赋初值消除latch
@@ -84,7 +85,7 @@ module  vending_machine_p3  (
         endcase
     end
 
-    //(3) output logic, using non-block assignment
+    //(3) output logic, using non-block assignment    三段 结果输出计算
     reg  [1:0]   change_r ;
     reg          sell_r ;
     always @(posedge clk or negedge rstn) begin
@@ -408,5 +409,6 @@ a9fe + bf1f + a9fe + 0117 + 0011 + 0028 + 04d2 + 04d2 + 0028 + 0000 + 6874 + 747
 (3) 将进位(6)加到低16位(ff67)上：   
 6 + ff67 = ff6d 
 (4) 将 ff6d取反得：checksum = 0092  
+
 
 

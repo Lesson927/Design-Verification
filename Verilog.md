@@ -16,6 +16,7 @@
 
 ## 状态机 FSM（Finite State Machine）
 **三段式** 
+必须是时序-组合-时序  
 ```verilog
 // vending-machine
 // 2 yuan for a bottle of drink
@@ -409,6 +410,7 @@ a9fe + bf1f + a9fe + 0117 + 0011 + 0028 + 04d2 + 04d2 + 0028 + 0000 + 6874 + 747
 (3) 将进位(6)加到低16位(ff67)上：   
 6 + ff67 = ff6d 
 (4) 将 ff6d取反得：checksum = 0092  
+
 
 
 

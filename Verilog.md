@@ -411,6 +411,30 @@ a9fe + bf1f + a9fe + 0117 + 0011 + 0028 + 04d2 + 04d2 + 0028 + 0000 + 6874 + 747
 6 + ff67 = ff6d 
 (4) 将 ff6d取反得：checksum = 0092  
 
+## 原语
+构成设计的最基本单元，通过真值表描述其功能  
+分为组合逻辑UDP和时序逻辑UDP  
+```verilog
+primitive nand_my(out, a, b);
+   output       out ;
+   input        a, b ;
+
+   table
+    //a         b       :       out ;
+      0         0       :       1 ;
+      0         1       :       1 ;
+      1         0       :       1 ;
+      1         1       :       0 ;
+   endtable
+endprimitive
+```
+
+## 深入理解latch
+
+
+## 关于wire和reg
+
+
 
 
 

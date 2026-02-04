@@ -64,7 +64,7 @@ compile:
     vsim -c -do "source compile.do;exit" | tee -a compile.log
 
 #Run elaboration
-simulate:
+elaborate:
     @echo "Running elaborate.do..."
     vsim -c -do "source elaborate.do;exit"
 
@@ -87,6 +87,13 @@ clean:
     @echo "Cleanning simulation outputs"
     rm -rf ...
 
+#help
+help:
+    @echo "Cmomand list"
+    @echo "make compile"
+    @echo "make elaborate"
+    @echo "make simulate"
+
 .PHONY: all compile elaborate simulate clean
 ```
 
@@ -97,6 +104,7 @@ clean:
 <img width="2551" height="138" alt="image" src="https://github.com/user-attachments/assets/7f15f534-30ee-4e77-9bf2-fc09239d45b4" />
 <img width="861" height="432" alt="image" src="https://github.com/user-attachments/assets/776b664f-da9b-4315-8eb4-f22585db668f" />
 <img width="1075" height="292" alt="image" src="https://github.com/user-attachments/assets/ab0b9f04-9e76-4522-bd68-456e5ab108a5" />
+
 
 
 

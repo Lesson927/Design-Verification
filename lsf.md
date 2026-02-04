@@ -25,6 +25,8 @@ LSF（Load Sharing Facility）是IBM旗下的一款分布式集群管理系统�
 `-r  rerun选项，即作业失败后自动重新运行，提交大量作业时此选项比较有用；`  
 example:  
 `bsub -q queue_name _____`  
+`bsub -q abc -Is make all`  
+`bsub -q abc -Is verdi -gui &`
 
 ## bqueues
 bequeues 查询所有queue的状态  

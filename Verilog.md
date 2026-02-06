@@ -430,9 +430,18 @@ endprimitive
 ```
 
 ## 深入理解latch
-
+锁存器
+<img width="424" height="261" alt="image" src="https://github.com/user-attachments/assets/9a57a5d6-a75b-4846-b697-67148e0ad6c5" />
+触发器
+<img width="238" height="169" alt="image" src="https://github.com/user-attachments/assets/2bfbe3ae-7ff9-4c31-a633-cbe8fa221c3b" />
+触发器是寄存器的基本组成单元，一个触发器是由两个锁存器组成，可以实现上升沿改变，下降沿锁存。  
+所以latch其实就是主要在组合逻辑中使用，所以这也是为什么组合逻辑中if-else/case覆盖条件不全（缺项default）会导致产生latch呢？
+**因为条件不全-->覆盖不全条件时怎么办？-->verilog原则：保持原值-->产生latch**  
+因为latch在enable为低时保持原值（如上图）  
+Verilog原则：某条件下输出没有被赋值则必须保持原值。
 
 ## 关于wire和reg
+
 
 
 

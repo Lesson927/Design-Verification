@@ -69,6 +69,8 @@ Ctrl + Shift + T - 新建标签页
 Ctrl + PgUp/PgDn - 向左/右切换标签页
 
 # 环境变量配置
+**rc文件：名称以 rc 结尾的配置文件，例如 .bashrc，是特定程序每次启动时自动运行的命令。rc 代表“run commands，运行命令”。**
+
 ## 方法一：export PATH
 ```shell
 export PATH=/home/uusama/mysql/bin:$PATH
@@ -114,6 +116,17 @@ export PATH=$PATH:/home/uusama/mysql/bin
 ```
 
 # 命令别名 alias
+```shell
+alias [NAME]=[NEW_NAME] #注意等号两边不能有空格
+#或者
+alias [NAME] '[NEW_NAME]'
+```
+注意  
+- 有空格时需要''
+`alias lsl='la -al'`
+- 命令中包含双引号""
+`alias coder='code --user-data-dir="~/.vscode-root"'`
+
 
 
 

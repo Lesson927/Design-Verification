@@ -759,7 +759,56 @@ module counter_tb;
 endmodule
 ```
 
+## 另外两种的监控方式
 
+### interface
+```sv
+interface glitch_checker_abs(
+    input clk,           // 要检测的时钟信号
+    realtime thrh,       // 毛刺阈值（最小允许周期时间）
+    input en            // 使能信号
+);
+realtime time_cur, time_prev, delta;
+// time_cur : 当前时间戳
+// time_prev: 上一次的时间戳  
+// delta    : 两次时间差（即时钟周期）
+always@(clk) begin           // 时钟每次跳变（上升沿或下降沿）都触发
+    time_cur = $realtime;     // 记录当前仿真时间
+    delta = time_cur - time_prev;  // 计算与前一次的时间差
+    time_prev = time_cur;      // 更新上一次时间
+    
+    // 如果时间差小于阈值，说明出现了毛刺（周期太短）
+    if((delta < thrh) && en) begin
+        abs_glitch: assert(1==0)  // 强制断言失败
+        else `LOG("Glitch Found!");  // 打印错误日志
+    end
+end
+endinterface: glitch_checker_abs
+```
+
+### 宏定义
+```sv
+// 功能：检查FIFO不会溢出（写满时再写）或下溢（读空时再读）
+// 应用场景：芯片验证中FIFO控制逻辑检查
+
+`define CHECK_FIFO(FIFO_NAME, WR_EN, RD_EN, FULL, EMPTY, CLK, RST_N) \
+\
+property p_fifo_overflow; \
+    @(posedge CLK) disable iff (!RST_N) \
+    (WR_EN && FULL) |-> \
+    $error("[%0t] 错误：FIFO %s 溢出！写操作时FIFO已满", $time, FIFO_NAME); \
+endproperty \
+\
+property p_fifo_underflow; \
+    @(posedge CLK) disable iff (!RST_N) \
+    (RD_EN && EMPTY) |-> \
+    $error("[%0t] 错误：FIFO %s 下溢！读操作时FIFO已空", $time, FIFO_NAME); \
+endproperty \
+\
+FIFO_``FIFO_NAME``_OVF : assert property (p_fifo_overflow); \
+FIFO_``FIFO_NAME``_UDF : assert property (p_fifo_underflow);
+```
+优点：比function和task强，可以always执行
 
 
 

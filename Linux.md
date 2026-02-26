@@ -68,6 +68,70 @@ tee 同时输出到屏幕和文件
 Ctrl + Shift + T - 新建标签页  
 Ctrl + PgUp/PgDn - 向左/右切换标签页
 
+# 环境变量配置
+## 方法一：export PATH
+```shell
+export PATH=/home/uusama/mysql/bin:$PATH
+#或者把PATH放在前面
+export PATH=$PATH:/home/uusama/mysql/bin
+```
+- 生效时间：立即生效
+- 生效期限：当前终端有效，窗口关闭后无效
+- 生效范围：仅对当前用户有效
+## 方法二： gvim ~/.bashrc
+```shell
+vim ~/.bashrc
+# 在最后一行加上
+export PATH=$PATH:/home/uusama/mysql/bin
+```
+- 生效时间：`source ~/.bashrc`生效
+- 生效期限：永久有效
+- 生效范围：仅对当前用户有效
+## 方法三：gvim ~/.bash_profile
+和方法二类似  
+## 方法四：gvim /etc/bashrc
+```shell
+# 如果/etc/bashrc文件不可编辑，需要修改为可编辑
+chmod -v u+w /etc/bashrc
+ 
+vim /etc/bashrc
+# 在最后一行加上
+export PATH=$PATH:/home/uusama/mysql/bin
+```
+- 生效时间：`source /etc/bashrc`生效
+- 生效期限：永久有效
+- 生效范围：对所有用户有效
+
+# 环境变量文件加载
+系统环境变量 -> 用户自定义环境变量 /etc/environment -> /etc/profile -> ~/.profile
+```
+/etc/environment
+/etc/profile
+/etc/profile.d/test.sh，新建文件，没有文件夹可略过
+/etc/bashrc，或者/etc/bash.bashrc
+~/.bash_profile，或者~/.profile
+~/.bashrc
+```
+
+# 命令别名 alias
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

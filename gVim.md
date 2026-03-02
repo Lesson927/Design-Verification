@@ -23,6 +23,12 @@ __shift +*__
 **ctrl + q**  
     delete 删除  
     ctrl + c/v 复制粘贴  
-    I 插入 ... esc 退出  
-    
+    I 前插入/ A 后插入 ... esc 退出  
+
+## 可视化
+shift + v 行选择
+ctrl  + v 行列选择
+shift + </> 减少/添加缩进
+
+
 

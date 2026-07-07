@@ -56,4 +56,8 @@ verdi 保存波形信号
 verdi 导入波形信号  
 波形界面->File->Restore Signal
 
+## 查看覆盖率
+```
+verdi -cov -covdir xxx.vdb
+```
 

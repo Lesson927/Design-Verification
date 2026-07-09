@@ -9,3 +9,6 @@ SystemVerilog
 
 ## 验证环境（verification env）
 [env](https://www.chipverify.com/systemverilog/systemverilog-testbench-example-2)
+
+## 作用域符::
+

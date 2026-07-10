@@ -11,4 +11,50 @@ SystemVerilog
 [env](https://www.chipverify.com/systemverilog/systemverilog-testbench-example-2)
 
 ## 作用域符::
+### 定义外部函数
+```systemverilog
+class ABC;
+  int data;
+  extern virtual function void display();
+endclass
+
+function void ABC::display();
+  $display("data = 0x%0h",data);
+endfunction
+
+module tb;
+  initial begin
+    ABC abc = new();
+    abc.data = 32'hface_cafe;
+    abc.display();
+  end
+endmodule
+```
+### 访问静态方法/函数
+```
+drv = my_driver::type_id::create("drv",this);
+```
+### 使用package
+```
+package my_pkg;
+  typedef enum bit {FALSE, TRUE} e_bool;
+endpackage
+
+import my_pkg::*;
+
+module tb;
+  typedef enum bit {TRUE, FALSE} ebool;
+  initial begin
+    e_bool val;
+
+    val = my_pkg::TRUE;
+    $display("val = 0x%0h",val);
+    
+    val = TRUE;
+    $display("val = 0x%0h",val);
+  end
+
+endmodule
+```
+### 
 

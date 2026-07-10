@@ -31,11 +31,11 @@ module tb;
 endmodule
 ```
 ### 访问静态方法/函数
-```
+```sv
 drv = my_driver::type_id::create("drv",this);
 ```
 ### 使用package
-```
+```sv
 package my_pkg;
   typedef enum bit {FALSE, TRUE} e_bool;
 endpackage

@@ -94,3 +94,12 @@ clean:
 
 
 ```
+
+## others
+### 编译方法
+1.直接编译各种pkg.sv  
+2.发现pkg.sv里面各种`include  
+3.去找+incdir+相关    
+总结：incdir和include是组合实现
+
+

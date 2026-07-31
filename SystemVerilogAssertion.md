@@ -543,6 +543,22 @@ bind top.u2 mutex_chk i2(c，d，clk);
 ```systemverilog
 c_mutex： cover property(p_mutex); 
 ```
+## 格式
+```
+property
+
+endproperty
+```
+```
+xxxxx_sva: assert property ()
+    else `uvm_error()
+```
+或者
+```
+xxxxx_sva: assert property ()
+    `uvm_info()
+    else `uvm_error(); //注意分号
+```
 
 ## 一个例子
 这是一个简单的计数器，帮助我们很好的掌握SVA在验证中的架构。  

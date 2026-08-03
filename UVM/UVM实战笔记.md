@@ -1043,16 +1043,24 @@ extern virtual task write(output uvm_status_e status,
 
 ### 前门访问
 所谓前门访问操作就是通过寄存器配置总线（如APB协议、OCP协议、I2C协议等）来对DUT进行操作。无论在任何总线协议中，前门访问操作只有两种：读操作和写操作。  
+```systemverilog
+read
+write
+```
 
 
 ### 后门访问
 后门访问是与前门访问相对的操作，从广义上来说，所有不通过DUT的总线而对DUT内部的寄存器或者存储器进行存取的操作都是后门访问操作。所有后门访问操作都是不消耗仿真时间（即$time打印的时间）而只消耗运行时间的。这是后门访问操作的最大优势。  
+```
+read/write
+poke/peek
+```
 
 ### 使用interface进行后门访问操作
 
 在interface中定义函数  
 
-### UVM中后面访问操作的实现：DPI+VPI
+### UVM中后门访问操作的实现：DPI+VPI
 **DPI-C**
 
 

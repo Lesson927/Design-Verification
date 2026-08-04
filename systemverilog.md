@@ -56,5 +56,19 @@ module tb;
 
 endmodule
 ```
-### 
+### 类型转换
+```systemverilog
+  typedef enum logic [6:0] {
+    IDLE         = 7'b0000001,
+    READ_DESP    = 7'b0000010,
+    CHECK_DESP   = 7'b0000100,
+    READ_BUFFER1 = 7'b0001000,
+    READ_BUFFER2 = 7'b0010000,
+    WRITE_DESP   = 7'b0100000,
+    SUSPEND      = 7'b1000000
+  } dma_state_e;
+......
+cov.sample(dma_state_e'(cs), dma_state_e'(ns));  
+// 枚举类型和普通整型/逻辑型在 SystemVerilog 中是强类型的，不能直接赋值，需要显式转换
+```
 

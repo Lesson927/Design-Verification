@@ -71,4 +71,16 @@ endmodule
 cov.sample(dma_state_e'(cs), dma_state_e'(ns));  
 // 枚举类型和普通整型/逻辑型在 SystemVerilog 中是强类型的，不能直接赋值，需要显式转换
 ```
+### 结构体与枚举
+```systemverilog
+typedef struct {
+bit  [31:0] addr;
+bit  [31:0] data;
+} addr_data_s;
 
+typedef enum bit {
+APB_READ  =  1'b0,
+APB_WRITE =  1'B1
+} apb_dir_e;
+
+```

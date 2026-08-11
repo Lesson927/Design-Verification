@@ -56,6 +56,16 @@ verdi 保存波形信号
 verdi 导入波形信号  
 波形界面->File->Restore Signal
 
+### 计算波形方波信息
+- 设置好cursor和marker光标
+- 波形任务栏->view->signal event report
+<img width="514" height="121" alt="image" src="https://github.com/user-attachments/assets/ddee342e-0fb7-4017-9d65-dbe66bf778ff" />  
+
+### 总线操作
+<img width="554" height="447" alt="image" src="https://github.com/user-attachments/assets/8938600f-3ee6-4f99-af32-5985df7836c8" />  
+- signal->bus operation->expend ad Sub-bus
+
+
 ## 查看覆盖率
 ```
 verdi -cov -covdir xxx.vdb

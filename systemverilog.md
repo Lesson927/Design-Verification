@@ -92,7 +92,26 @@ data = '0;  //全部位清零
 function和task的声明需要在执行语句之前，一般在开头。  
 容易忽略导致在super.task()后声明导致语法错误。
 
-
+### interface
+#### clocking
+确定信号什么时候采样和方向
+```sv
+clocking cb_mon @(posedge clk or negedge rst_n);
+    // 所有信号都是 input
+    input  rq_address;
+    input  rq_wdata;
+    input  rq_wr;
+    input  rq_valid;
+    input  res_rdata;
+    input  res_valid;
+endclocking
+```
+#### modport
+定义不同模块下的接口方向
+```sv
+modport drv(clocking cb_drv, input clk, input rst_n);
+modport mon(clocking cb_mon, input clk, input rst_n);
+```
 
 
 

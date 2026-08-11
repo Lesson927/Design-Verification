@@ -63,6 +63,7 @@ verdi 导入波形信号
 
 ### 总线操作
 <img width="554" height="447" alt="image" src="https://github.com/user-attachments/assets/8938600f-3ee6-4f99-af32-5985df7836c8" />  
+  
 - signal->bus operation->expend ad Sub-bus
 
 

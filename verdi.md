@@ -81,15 +81,15 @@ verdi 导入波形信号
 ### 原理图状态机跳转
 <img width="903" height="485" alt="image" src="https://github.com/user-attachments/assets/c61cc3ac-2037-4873-84a1-9f87d2b9f1d2" />
 <img width="225" height="241" alt="image" src="https://github.com/user-attachments/assets/a311c09f-2a77-4401-8ad7-abc55594267e" />
-状态机静态显示选项
-  
+状态机静态显示选项<br>
 <img width="330" height="314" alt="image" src="https://github.com/user-attachments/assets/39ecc0cd-f549-4b2d-9173-a766bee7d829" />
-状态机跳转动画开关
+状态机跳转动画开关<br>
    
 - 双击原理图中的转态机
 - 拉取相关状态机state信号
 - 勾选显示选项
 - 点击波形查看状态机跳转
+- 将状态机波形命名去除 对应信号值跳转窗口（中间）右键 -> remove local alias
 
 ## 查看覆盖率
 ```

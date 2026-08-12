@@ -67,6 +67,29 @@ verdi 导入波形信号
 - signal->bus operation->expend ad Sub-bus
 - 可以把总线的bits拆分或者合并
 
+### 信号比对
+<img width="779" height="411" alt="image" src="https://github.com/user-attachments/assets/5b39eae2-b614-4a35-8e83-d7830c318222" />
+  
+- ctr选中两个信号
+- tools -> waveform compare -> compare 2 signals
+
+### 信号逻辑操作
+<img width="355" height="448" alt="image" src="https://github.com/user-attachments/assets/911c22f4-5d1e-4e7e-a4a8-814c8cc16791" />
+
+- signals -> logical operation
+
+### 原理图状态机跳转
+<img width="903" height="485" alt="image" src="https://github.com/user-attachments/assets/c61cc3ac-2037-4873-84a1-9f87d2b9f1d2" />
+<img width="225" height="241" alt="image" src="https://github.com/user-attachments/assets/a311c09f-2a77-4401-8ad7-abc55594267e" />
+状态机静态显示选项
+  
+<img width="330" height="314" alt="image" src="https://github.com/user-attachments/assets/39ecc0cd-f549-4b2d-9173-a766bee7d829" />
+状态机跳转动画开关
+   
+- 双击原理图中的转态机
+- 拉取相关状态机state信号
+- 勾选显示选项
+- 点击波形查看状态机跳转
 
 ## 查看覆盖率
 ```

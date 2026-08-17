@@ -168,6 +168,16 @@ AXI协议定义了三种突发类型：
 
 ## 事务属性
 
+<img width="1024" height="573" alt="image" src="https://github.com/user-attachments/assets/e3ac8ba8-3f6f-480c-90e6-8bccb525e3ae" />  
+<img width="1160" height="571" alt="image" src="https://github.com/user-attachments/assets/794ac8d8-7779-4a6d-be86-efd29b8ce843" />  
+<img width="1222" height="612" alt="image" src="https://github.com/user-attachments/assets/e02812ef-8151-4f34-b2d0-a91b8e2d2f7d" />  
+
+## 具体实例
+<img width="1531" height="479" alt="image" src="https://github.com/user-attachments/assets/a2eac10e-a033-437b-b05c-85b570b30374" />  
+4000_0000+16*4 = 4000_0040  
+<img width="1543" height="592" alt="image" src="https://github.com/user-attachments/assets/abededb9-6503-403a-a834-d9d3b9e42fa1" />  
+一个brust周期读16个4bytes数据
+<img width="1201" height="511" alt="image" src="https://github.com/user-attachments/assets/77fa45a3-da55-429e-98e1-0a8e355d5312" />  
 
 
 

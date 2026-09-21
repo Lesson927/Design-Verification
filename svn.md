@@ -61,6 +61,7 @@ svn log
 svn diff
 svn diff -r 123 #当前版本和某一个版本对比
 svn diff -r 122：123 #对比某个旧版本与相对新的版本
+svn blame xxx #追责某个文件谁做的修改
 ```
 ### 10.分支
 ```bash

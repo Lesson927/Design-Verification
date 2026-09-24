@@ -35,5 +35,13 @@ shift + </> 减少/添加缩进
 撤销 u  
 重做 ctr+r
 
-
-
+## 正则表达式
+[正则表达式详细](https://www.cnblogs.com/tlnshuju/p/19379845)  
++ 例子
+```
+:g/^\s*test.*_intr$/.,+4d
+```
+:g/正则/命令  
+^\s*test.*_intr$ 匹配  
+.,+4 当前行到往后4行共5行  
+d    删除  

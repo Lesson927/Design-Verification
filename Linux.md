@@ -56,6 +56,11 @@ tar xvf simlib_questa10.6c.tar.gz
 kill
 ps
 ```
+## 路径
+```
+pwd 显示所在文件夹路径
+realpath 显示具体文件路径
+```
 ## 其他
 ```bash
 chmod   权限 -R 递归
